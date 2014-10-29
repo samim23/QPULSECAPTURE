@@ -10,9 +10,11 @@ QT +=   core \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET =    QPULSECAPTURE
+TARGET =    BROM #it should be translated as something like Breath Rate Measurements On Mice
 TEMPLATE =  app
-VERSION =   1.0.0.3
+VERSION =   1.0.0.1
+DEFINES +=  APP_NAME=\\\"$${TARGET}\\\" \
+            APP_VERSION=\\\"$${VERSION}\\\"
 
 SOURCES +=  main.cpp\
             mainwindow.cpp \
@@ -22,7 +24,6 @@ SOURCES +=  main.cpp\
             qharmonicprocessor.cpp \
             qsettingsdialog.cpp \
             qeasyplot.cpp \
-            qbackgroundwidget.cpp
 
 HEADERS  += mainwindow.h \
             qimagewidget.h \
@@ -32,17 +33,14 @@ HEADERS  += mainwindow.h \
             qharmonicprocessor.h \
             qsettingsdialog.h \
             qeasyplot.h \
-            qbackgroundwidget.h
 
 FORMS += qsettingsdialog.ui
 
 RC_ICONS = $$PWD/../Resources/Images/App_ico.ico
-#RESOURCES = $$PWD/../Resources/Images/App_resources.qrc
-#CONFIG(release, debug|release): DEFINES += QT_NO_WARNING_OUTPUT
+CONFIG(release, debug|release): DEFINES += QT_NO_WARNING_OUTPUT
 
 include(OPENCV.pri)
 include(FFTW.pri)
-include(ALGLIB.pri)
 
 
 

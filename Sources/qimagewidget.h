@@ -30,13 +30,10 @@ signals:
 
 public slots:
     void updateImage(const cv::Mat &image, qreal frame_period); // takes cv::Mat image and converts it to the appropriate Qt QImage format
-    void updatePointer(const qreal *pointer, quint16 length);  // updates pointer to data;
     void updateValues(qreal value1, qreal value2, bool flag); // use to update strings
-    void switchColorScheme(); // use to switch between black and white color of text on the image
     void set_warning_status(const char *input_string);
-    void toggle_advancedvisualization(bool value); // interface to switch m_advancedvisualizationFlag
-    void set_drawDataFlag(bool value); // read m_drawDataFlag comment
     void clearFrequencyString(qreal value);
+
 protected:
     void paintEvent(QPaintEvent*);
     void mousePressEvent(QMouseEvent* event);
@@ -66,7 +63,6 @@ private slots:
     inline QRect make_proportional_rect(QRect rect, int width, int height) const; // returns QRect inside input rect with the same center point, but with proportional sizes corresponding to width and height
     inline cv::Rect crop_aimrect() const;    // should be used for m_aimrect cropping
     void drawStrings(QPainter &painter, const QRect &input_rect); // use this eunction inside paintEvent(...) handler to draw string on the image
-    void drawData(QPainter &painter, const QRect &input_rect);   // draws pt_Data[] if ptData != NULL and drops pt_Data to NULL on every function call
 };
 
 //------------------------------------------------------------------------------------------------------

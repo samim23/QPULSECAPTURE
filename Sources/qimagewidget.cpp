@@ -13,11 +13,6 @@ QImageWidget::QImageWidget(QWidget *parent): QWidget(parent)
 {
     pt_data = NULL;
     m_margin = 10;
-    m_informationColor = QColor(Qt::black);
-    m_contourColor = QColor(Qt::black);
-    m_fillColor = QColor(Qt::white);
-    m_advancedvisualizationFlag = false;
-    m_drawDataFlag = false;
 }
 
 //-----------------------------------------------------------------------------------
@@ -46,14 +41,10 @@ void QImageWidget::updateImage(const cv::Mat& image, qreal frame_period)
 void QImageWidget::paintEvent(QPaintEvent* )
 {
     QPainter painter( this );
+    painter.setRenderHint(QPainter::Antialiasing);
     QRect temp_rect = make_proportional_rect(this->rect(), opencv_image.cols, opencv_image.rows);
-
-    painter.drawImage( temp_rect, qt_image); // Draw inside widget, the image is scaled to fit the rectangle
+    painter.drawImage( temp_rect, qt_image); // Draw inside widget, the image is scaled to fit the rectangle   
     drawStrings(painter, temp_rect);          // Will draw m_informationString on the widget
-    if(m_drawDataFlag)
-    {
-        drawData(painter, temp_rect);
-    }
 }
 
 //------------------------------------------------------------------------------------
@@ -93,66 +84,16 @@ void QImageWidget::mouseMoveEvent(QMouseEvent *event)
 
 void QImageWidget::drawStrings(QPainter &painter, const QRect &input_rect)
 {
-    if(!m_advancedvisualizationFlag)
-    {        
         if(!m_informationString.isEmpty())
         {
             qreal startX = input_rect.x() + m_margin;
             qreal startY = input_rect.y();
-            qreal pointsize = (qreal)input_rect.height()/32;
-            painter.setPen( m_informationColor );
-            QFont font("Calibri", pointsize, QFont::DemiBold);
-            painter.setFont( font );
-
-            painter.drawText( startX, startY + input_rect.height() - m_margin, m_informationString); // Draws resolution and frametime
-
-            if(!m_warningString.isEmpty())
-            {
-                font.setPointSizeF( pointsize * 2);
-                painter.setFont( font );
-                painter.setPen( Qt::red );
-                painter.drawText(input_rect, Qt::AlignCenter, m_warningString);
-                m_warningString.clear();
-            }
-            else
-            {
-                font.setPointSizeF( pointsize * 3 );
-                painter.setFont( font );
-                painter.setPen( m_frequencyColor );
-
-                startY += font.pointSize() + m_margin;
-                painter.drawText(startX, startY, m_frequencyString); // Draws frequency value
-
-                font.setPointSizeF( pointsize );
-                painter.setFont( font );
-                painter.setPen( m_informationColor );
-
-                if(m_frequencyString.isEmpty())
-                {
-                    painter.drawText(startX, startY, "Unreliable");
-                }
-                else
-                {
-                    painter.drawText(startX + m_frequencyString.size() * pointsize * 2.25, startY, "bpm");                   
-                }
-                painter.drawText(startX, startY + pointsize*1.5, m_snrString);
-            }
-        }
-    }
-    else
-    {
-        if(!m_informationString.isEmpty())
-        {
-            painter.setRenderHint(QPainter::Antialiasing); // Turn antialiasing on
-
-            qreal startX = input_rect.x() + m_margin;
-            qreal startY = input_rect.y();
-            qreal pointsize = (qreal)input_rect.height()/32;
+            qreal pointsize = (qreal)input_rect.height()/28;
 
             QPen pen(Qt::NoBrush, 1.0, Qt::SolidLine);
-            pen.setColor(m_contourColor);
+            pen.setColor(Qt::black);
             painter.setPen( pen );
-            painter.setBrush(m_fillColor);
+            painter.setBrush(Qt::white);
             QFont font("Calibri", pointsize, QFont::Black);
             font.setItalic(true);
             QPainterPath path;
@@ -168,7 +109,7 @@ void QImageWidget::drawStrings(QPainter &painter, const QRect &input_rect)
                 path_warning.addText(pX, pY, font, m_warningString);
                 painter.setBrush(Qt::red);
                 painter.drawPath(path_warning);
-                painter.setBrush(m_fillColor);
+                painter.setBrush(Qt::white);
                 m_warningString.clear();
             }
             else
@@ -180,7 +121,7 @@ void QImageWidget::drawStrings(QPainter &painter, const QRect &input_rect)
                 painter.setBrush(m_frequencyColor);
                 painter.drawPath(path_freq);
 
-                painter.setBrush(m_fillColor);
+                painter.setBrush(Qt::white);
                 font.setPointSizeF( pointsize );
                 if(m_frequencyString.isEmpty())
                 {
@@ -194,18 +135,6 @@ void QImageWidget::drawStrings(QPainter &painter, const QRect &input_rect)
             }
             painter.drawPath(path);
         }
-    }
-
-
-}
-
-//-----------------------------------------------------------------------------------
-
-void QImageWidget::updatePointer(const qreal *pointer, quint16 length)
-{
-    pt_data = pointer;
-    m_datalength = length;
-    update();
 }
 
 //-----------------------------------------------------------------------------------
@@ -226,85 +155,10 @@ void QImageWidget::updateValues(qreal value1, qreal value2, bool flag) // value1
 
 //-----------------------------------------------------------------------------------
 
-void QImageWidget::drawData(QPainter &painter, const QRect &input_rect)
-{
-    if((pt_data != NULL) && (m_datalength != 0))
-    {
-        QPen pen(QBrush(Qt::NoBrush),1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-        pen.setColor(Qt::yellow);
-        painter.setBrush(Qt::NoBrush);
-        painter.setPen(pen);
-
-        QPainterPath path;
-
-        qreal startY = input_rect.y() + (qreal)input_rect.height()*7/8;
-        qreal startX = input_rect.x() + m_margin;
-        qreal stepX = (qreal)(input_rect.width() - 2*m_margin)/m_datalength;
-        qreal stepY = (qreal)input_rect.height()/24;
-
-        path.moveTo(startX, startY - pt_data[0]*stepY);
-
-        for(quint16 i = 1; i < m_datalength; i++)
-        {
-            startX += stepX;
-            path.lineTo(startX, startY - pt_data[i]*stepY);
-        }
-        painter.drawPath( path );
-        pt_data = NULL; // drop to NULL for external objects protection after drawing operation
-    }
-
-}
-
-//-----------------------------------------------------------------------------------
-
-void QImageWidget::switchColorScheme()
-{
-    if(!m_advancedvisualizationFlag)
-    {
-        if( m_informationColor == QColor(Qt::black) )
-        {
-            m_informationColor = QColor(Qt::white);
-        }
-        else
-        {
-            m_informationColor = QColor(Qt::black);
-        }
-    }
-    else
-    {
-        if( m_contourColor == QColor(Qt::black))
-        {
-            m_contourColor = QColor(Qt::white);
-            m_fillColor = QColor(Qt::black);
-        }
-        else
-        {
-            m_fillColor = QColor(Qt::white);
-            m_contourColor = QColor(Qt::black);
-        }
-    }
-}
-
-//----------------------------------------------------------------------------------
-
 void QImageWidget::set_warning_status(const char * input_string)
 {
     m_frequencyString.clear();
     m_warningString = QString( input_string );
-}
-
-//----------------------------------------------------------------------------------
-
-void QImageWidget::toggle_advancedvisualization(bool value)
-{
-    m_advancedvisualizationFlag = value;
-}
-
-//----------------------------------------------------------------------------------
-
-void QImageWidget::set_drawDataFlag(bool value)
-{
-    m_drawDataFlag = value;
 }
 
 //----------------------------------------------------------------------------------

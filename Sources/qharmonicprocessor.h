@@ -2,17 +2,13 @@
 #define QHARMONICPROCESSOR_H
 
 #include <QObject>
-
 #include "fftw3.h"
-#include "ap.h" // ALGLIB types
-#include "dataanalysis.h" // ALGLIB functions
 
 #define BOTTOM_LIMIT 0.7 // in s^-1, it is 42 bpm
 #define TOP_LIMIT 4.5 // in s^-1, it is 270 bpm
 #define SNR_TRESHOLD 2.0 // in most cases this value is suitable when (bufferlength == 256)
 #define HALF_INTERVAL 2 // defines the number of averaging indexes when frequency is evaluated, this value should be >= 1
 #define DIGITAL_FILTER_LENGTH 5 // in counts
-#define STROBE_FACTOR 8
 
 class QHarmonicProcessor : public QObject
 {
@@ -37,10 +33,8 @@ signals:
     void SlowPPGWasUpdated(const qreal *pointer, quint16 legth);
 
 public slots:
-    void WriteToDataRGB(unsigned long red, unsigned long green, unsigned long blue, unsigned long area, double time);
     void WriteToDataOneColor(unsigned long red, unsigned long green, unsigned long blue, unsigned long area, double time);
     void ComputeFrequency();
-    void set_PCA_flag(bool value);
     void switch_to_channel(color_channel value);
     qreal CountFrequency(); // inertion of a result depends on how frequently this function is called, if with period of 1 sec result is averaged frequency on 1 sec, if 1 min then averaged on 1 min etc.
     void set_zerocrossingCounter(quint16 value);
@@ -61,15 +55,9 @@ private:
     unsigned int curpos; //a current position I meant
     unsigned int datalength; //a length of data array
     unsigned int bufferlength; //a lenght of sub data array for FFT (bufferlength should be <= datalength)
-    alglib::real_2d_array PCA_RAW_RGB; // a container for PCA analysis
-    alglib::real_1d_array PCA_Variance; // array[0..2] - variance values corresponding to basis vectors
-    alglib::real_2d_array PCA_Basis; // array[0..2,0..2], whose columns will store basis vectors
-    alglib::ae_int_t PCA_Info; // PCA result code
     qreal *ptX; // a pointer to input counts history, for digital filtration
     quint16 loop(qint16) const; //a function that return a loop-index
     quint16 loop_for_ptX(qint16) const; //a function that return a loop-index
-    quint16 loop_for_PCA(qint16) const; //a function that return a loop-index
-    bool PCA_flag; // this flag controls whether ComputeFrequency use ordinary computation or PCA alignment, value is controlled by set_PCA_flag(...)
     fftw_plan m_plan;
     color_channel m_channel; // determines which color channel is enrolled by WriteToDataOneColor(...) method
     qreal *pt_Youtput; // a pointer to a vector of digital filter output
@@ -79,12 +67,6 @@ private:
     qreal m_output; // will store value that will be written in pt_Youtput[i]
     quint8 loop_on_two(qint16 difference) const;
     qint16 m_zerocrossingCounter; // will store the number of pulse waves for averaging HRfrequency estimation
-
-    qreal *pt_SlowPPG;
-    qreal m_strobeValue;
-    qreal m_accumulator;
-    quint16 m_pos;
-
     double m_leftThreshold; // a bottom threshold for warning about high pulse value
     double m_rightTreshold; // a top threshold for warning aboul low pulse value
 };
@@ -98,11 +80,6 @@ inline quint16 QHarmonicProcessor::loop(qint16 difference) const
 inline quint16 QHarmonicProcessor::loop_for_ptX(qint16 difference) const
 {
     return ((DIGITAL_FILTER_LENGTH + (difference % DIGITAL_FILTER_LENGTH)) % DIGITAL_FILTER_LENGTH);
-}
-//---------------------------------------------------------------------------
-inline quint16 QHarmonicProcessor::loop_for_PCA(qint16 difference) const
-{
-    return ((bufferlength + (difference % bufferlength)) % bufferlength);
 }
 //---------------------------------------------------------------------------
 inline quint8 QHarmonicProcessor::loop_on_two(qint16 difference) const

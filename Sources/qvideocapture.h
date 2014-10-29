@@ -64,7 +64,7 @@ public:
     ~QVideoCapture();
 
 signals:
-    void frame_was_captured(const cv::Mat& value); // should be emmited right after a new frame was captured, to use in your own Qt-projects first do qRegisterMetaType<cv::Mat>("cv::Mat")
+    void frame_was_captured(const cv::Mat& value);      // should be emmited right after a new frame was captured, to use in your own Qt-projects first do qRegisterMetaType<cv::Mat>("cv::Mat")
     //------------------------------------------
     void set_default_brightness(int value);
     void set_default_contrast(int value);
@@ -76,18 +76,18 @@ signals:
     //------------------------------------------
 
 public slots:
-    bool openfile(const QString &filename); // this function should to call cv::VideoCapture::open(filename)
-    bool opendevice(int period);            // this function should to call cv::VideoCapture::open(device)
-    bool isOpened();                        // return true if cv::VideoCapture is opened
-    bool start();                           // starts the grabbing
-    bool resume();                          // starts the grabbing with determined period of time in ms
-    bool close();                           // stops the grabbing and closes video file or capturing device
-    bool pause();                           // stops the frametimer
-    int open_deviceSelectDialog();          // On success it should return device id for opendevice(...) function, thus you should use it in than way: class_instance->opendevice( device_select_dialog(), some_value )
-    bool open_resolutionDialog();           // creates an QDialog instance with video device resolution-controls, should be used as a GUI implementation of the camera controll functions
-    bool open_settingsDialog();             // creates an QDialog instance with video device characteristic-controls, should be used as a GUI implementation of the camera controll functions
+    bool openfile(const QString &filename);             // this function should to call cv::VideoCapture::open(filename)
+    bool opendevice(int period = DEFAULT_FRAME_PERIOD); // this function should to call cv::VideoCapture::open(device)
+    bool isOpened();                                    // return true if cv::VideoCapture is opened
+    bool start();                                       // starts the grabbing
+    bool resume();                                      // starts the grabbing with determined period of time in ms
+    bool close();                                       // stops the grabbing and closes video file or capturing device
+    bool pause();                                       // stops the frametimer
+    int open_deviceSelectDialog();                      // On success it should return device id for opendevice(...) function, thus you should use it in than way: class_instance->opendevice( device_select_dialog(), some_value )
+    bool open_resolutionDialog();                       // creates an QDialog instance with video device resolution-controls, should be used as a GUI implementation of the camera controll functions
+    bool open_settingsDialog();                         // creates an QDialog instance with video device characteristic-controls, should be used as a GUI implementation of the camera controll functions
     //------------------------------------------
-    bool set(int propertyID , double value);// this function should to call cv::VideoCapture::set(propertyID, value)
+    bool set(int propertyID , double value);            // this function should to call cv::VideoCapture::set(propertyID, value)
     bool set_brightness(int value);
     bool set_contrast(int value);
     bool set_saturation(int value);

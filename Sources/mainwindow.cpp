@@ -12,10 +12,8 @@ const char * MainWindow::QPlotDialogName[]=
     "Signal vs frame",
     "Amplitude spectrum",
     "Frame time vs frame",
-    "PCA 1-st projection",
     "Filter output vs frame",
     "Signal phase diagram",
-    "Breath curve vs frameSet"
 };
 //------------------------------------------------------------------------------------
 
@@ -25,17 +23,11 @@ MainWindow::MainWindow(QWidget *parent):
     setWindowTitle(APP_NAME);
     setMinimumSize(FRAME_WIDTH, FRAME_HEIGHT);
 
-    pt_centralWidget = new QBackgroundWidget(NULL, palette().color(backgroundRole()));
-    pt_centralWidgetLayout = new QVBoxLayout();
-    this->setCentralWidget(pt_centralWidget);
-    pt_centralWidget->setLayout(pt_centralWidgetLayout);
-    pt_centralWidgetLayout->setMargin(0);
-
     //--------------------------------------------------------------
     pt_display = new QImageWidget(); // Widgets without a parent are “top level” (independent) widgets. All other widgets are drawn within their parent
     pt_mainLayout = new QVBoxLayout();
     pt_display->setLayout(pt_mainLayout);
-    pt_centralWidgetLayout->addWidget(pt_display);
+    this->setCentralWidget(pt_display);
 
     //--------------------------------------------------------------
     pt_infoLabel = new QLabel(tr("<i>Choose a menu option, or make right-click to invoke a context menu</i>"));
@@ -102,15 +94,6 @@ void MainWindow::createActions()
     pt_DirectShowAct->setStatusTip(tr("Open a device-driver embedded settings dialog"));
     connect(pt_DirectShowAct, SIGNAL(triggered()), this, SLOT(callDirectShowSdialog()));
 
-    pt_fastVisualizationAct = new QAction(tr("Co&ntour"), this);
-    pt_fastVisualizationAct->setStatusTip(tr("Switch between contoured or uncontoured style of text on the screen"));
-    pt_fastVisualizationAct->setCheckable(true);
-    connect(pt_fastVisualizationAct, SIGNAL(triggered(bool)),pt_display, SLOT(toggle_advancedvisualization(bool)));
-
-    pt_changeColorsAct = new QAction(tr("Co&lor"), this);
-    pt_changeColorsAct->setStatusTip(tr("Switch between black or white color of text on the screen"));
-    connect(pt_changeColorsAct, SIGNAL(triggered()), pt_display, SLOT(switchColorScheme()));
-
     pt_openPlotDialog = new QAction(tr("&New plot"), this);
     pt_openPlotDialog->setStatusTip(tr("Create a new window for the visualization of appropriate process"));
     connect(pt_openPlotDialog, SIGNAL(triggered()), this, SLOT(createPlotDialog()));
@@ -128,9 +111,6 @@ void MainWindow::createMenus()
     //------------------------------------------------
     pt_optionsMenu = menuBar()->addMenu(tr("&Options"));
     pt_optionsMenu->addAction(pt_openPlotDialog);
-    pt_optionsMenu->addSeparator();
-    pt_optionsMenu->addAction(pt_fastVisualizationAct);
-    pt_optionsMenu->addAction(pt_changeColorsAct);
     pt_optionsMenu->setEnabled(false);
 
     //-------------------------------------------------
@@ -168,9 +148,10 @@ void MainWindow::createThreads()
     qRegisterMetaType<cv::Rect>("cv::Rect");
 
     //----------------------Connections------------------------------
-    connect(pt_opencvProcessor, SIGNAL(frame_was_processed(cv::Mat,double)), pt_display, SLOT(updateImage(cv::Mat,double)));
-    connect(pt_display, SIGNAL(rect_was_entered(cv::Rect)), pt_opencvProcessor, SLOT(setRect(cv::Rect)));
-    connect(pt_opencvProcessor, SIGNAL(no_regions_selected(const char*)), pt_display, SLOT(set_warning_status(const char*)));
+    connect(pt_opencvProcessor, SIGNAL(frameProcessed(cv::Mat,double)), pt_display, SLOT(updateImage(cv::Mat,double)));
+    connect(pt_display, SIGNAL(rect_was_entered(cv::Rect)), pt_opencvProcessor, SLOT(updateRect(cv::Rect)));
+    connect(pt_opencvProcessor, SIGNAL(selectRegion(const char*)), pt_display, SLOT(set_warning_status(const char*)));
+    connect(pt_videoCapture, SIGNAL(frame_was_captured(cv::Mat)), pt_opencvProcessor, SLOT(processRegion(cv::Mat)));
     //----------------------Thread start-----------------------------
     pt_improcThread->start();
 }
@@ -189,58 +170,54 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
 //------------------------------------------------------------------------------------
 
-bool MainWindow::openvideofile(const QString & videofileName)
+bool MainWindow::openvideofile()
 {
-    if ( !videofileName.isNull() )
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Select file"), "/video", tr("Video (*.avi *.mp4 *wmv)"));
+    while ( !pt_videoCapture->openfile(fileName) )
     {
-        m_timer.stop();
-        if ( pt_videoCapture->openfile(videofileName) )
+        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open video file!"), QMessageBox::Ok | QMessageBox::Open, this, Qt::Dialog);
+        if(msgBox.exec() == QMessageBox::Open)
         {
-            if ( pt_infoLabel ) // just remove label
-            {
-                pt_mainLayout->removeWidget(pt_infoLabel);
-                delete pt_infoLabel;
-                pt_infoLabel = NULL;
-            }
-            return true;
+            fileName = QFileDialog::getOpenFileName(this,tr("Select file"), "/video", tr("Video (*.avi *.mp4 *wmv)"));
         }
         else
         {
-            QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open video file!"), QMessageBox::Ok, this, Qt::Dialog);
-            msgBox.exec();
+            return false;
         }
     }
-    else
+    if ( pt_infoLabel ) // just remove label
     {
-        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("No file has been chosen!"), QMessageBox::Ok, this, Qt::Dialog);
-        msgBox.exec();
+        pt_mainLayout->removeWidget(pt_infoLabel);
+        delete pt_infoLabel;
+        pt_infoLabel = NULL;
     }
-    return false;
+    return true;
 }
 
 //------------------------------------------------------------------------------------
 
 bool MainWindow::opendevice()
 {
-    m_timer.stop();
     pt_videoCapture->open_deviceSelectDialog();
-
-    if ( pt_videoCapture->opendevice(DEFAULT_FRAME_PERIOD) )
+    while ( !pt_videoCapture->opendevice() )
     {
-        if ( pt_infoLabel ) // just remove label
+        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open video capture device!"), QMessageBox::Ok | QMessageBox::Open, this, Qt::Dialog);
+        if(msgBox.exec() == QMessageBox::Open)
         {
-            pt_mainLayout->removeWidget(pt_infoLabel);
-            delete pt_infoLabel;
-            pt_infoLabel = NULL;
+            pt_videoCapture->open_deviceSelectDialog();
         }
-        return true;
-    }
-    else
+        else
+        {
+            return false;
+        }
+    }   
+    if ( pt_infoLabel ) // just remove label
     {
-        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open video capture device!"), QMessageBox::Ok, this, Qt::Dialog);
-        msgBox.exec();
+        pt_mainLayout->removeWidget(pt_infoLabel);
+        delete pt_infoLabel;
+        pt_infoLabel = NULL;
     }
-    return false;
+    return true;
 }
 
 //------------------------------------------------------------------------------------
@@ -325,7 +302,7 @@ void MainWindow::onresume()
 {
     pt_videoCapture->resume();
     m_timer.start();
-    pt_opencvProcessor->update_timeCounter();
+    pt_opencvProcessor->updateClock();
 }
 
 //-----------------------------------------------------------------------------------
@@ -384,8 +361,11 @@ void MainWindow::configure_and_start_session()
         pt_harmonicProcessor->moveToThread(pt_harmonicThread);
         connect(pt_harmonicThread, SIGNAL(finished()),pt_harmonicProcessor, SLOT(deleteLater()));
         connect(pt_harmonicThread, SIGNAL(finished()),pt_harmonicThread, SLOT(deleteLater()));
+        connect(pt_opencvProcessor, SIGNAL(colorsEvaluated(ulong,ulong,ulong,ulong,double)), pt_harmonicProcessor, SLOT(WriteToDataOneColor(ulong,ulong,ulong,ulong,double)));
+        connect(pt_harmonicProcessor, SIGNAL(TooNoisy(qreal)), pt_display, SLOT(clearFrequencyString(qreal)));
+        connect(pt_harmonicProcessor, SIGNAL(HRfrequencyWasUpdated(qreal,qreal,bool)), pt_display, SLOT(updateValues(qreal,qreal,bool)));
         //---------------------------------------------------------------
-        if(dialog.get_flagRecord())
+        /*if(dialog.get_flagRecord())
         {
             if(m_saveFile.isOpen())
             {
@@ -399,16 +379,12 @@ void MainWindow::configure_and_start_session()
                 m_textStream << "dd.MM.yyyy hh:mm:ss.zzz \t CNSignal \t MeanRed \t MeanGreen \t MeanBlue \t PulseRate, bpm \t SNR, dB\n";
                 connect(pt_harmonicProcessor, SIGNAL(SignalActualValues(qreal,qreal,qreal,qreal,qreal,qreal)), this, SLOT(make_record_to_file(qreal,qreal,qreal,qreal,qreal,qreal)));
             }
-        }
-        //---------------------------------------------------------------
-        if(dialog.get_flagColor())
-        {
-            connect(pt_opencvProcessor, SIGNAL(colors_were_evaluated(ulong,ulong,ulong,ulong,double)), pt_harmonicProcessor, SLOT(WriteToDataRGB(ulong,ulong,ulong,ulong,double)));
-        }
-        else
-        {
-            connect(pt_opencvProcessor,SIGNAL(colors_were_evaluated(ulong,ulong,ulong,ulong,double)),pt_harmonicProcessor,SLOT(WriteToDataOneColor(ulong,ulong,ulong,ulong,double)));
-        }
+            else
+            {
+                QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not write a record to file"), QMessageBox::Ok, this, Qt::Dialog);
+                msgBox.exec();
+            }
+        }*/
         //---------------------------------------------------------------
         if(dialog.get_customPatientFlag())
         {
@@ -417,40 +393,8 @@ void MainWindow::configure_and_start_session()
                 QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open population distribution file"), QMessageBox::Ok, this, Qt::Dialog);
                 msgBox.exec();
             }
-        }
-        //---------------------------------------------------------------
-        connect(pt_harmonicProcessor, SIGNAL(TooNoisy(qreal)), pt_display, SLOT(clearFrequencyString(qreal)));
-        //---------------------------------------------------------------
-        disconnect(pt_videoCapture,0,0,0);
-        if(dialog.get_flagCascade())
-        {
-            QString filename = dialog.get_stringCascade();
-            while(!pt_opencvProcessor->load_cascadecalssifier_file(filename.toStdString()))
-            {
-                QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not load classifier file"), QMessageBox::Ok | QMessageBox::Open, this, Qt::Dialog);
-                if(msgBox.exec() == QMessageBox::Open)
-                {
-                    QString temp_filename = QFileDialog::getOpenFileName(this, tr("Open file"), "haarcascades/", tr("Cascade (*.xml)"));
-                    if(!temp_filename.isEmpty())
-                    {
-                        filename = temp_filename;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            connect(pt_videoCapture, SIGNAL(frame_was_captured(cv::Mat)), pt_opencvProcessor, SLOT(pulse_processing_with_classifier(cv::Mat)), Qt::BlockingQueuedConnection);
-        }
-        else
-        {
-            connect(pt_videoCapture, SIGNAL(frame_was_captured(cv::Mat)), pt_opencvProcessor, SLOT(pulse_processing_custom_region(cv::Mat)), Qt::BlockingQueuedConnection);
-        }
+        }      
         //--------------------------------------------------------------
-        pt_harmonicProcessor->set_PCA_flag(dialog.get_flagPCA());
-        //--------------------------------------------------------------
-        connect(pt_harmonicProcessor, SIGNAL(CNSignalWasUpdated(const qreal*,quint16)), pt_display, SLOT(updatePointer(const qreal*,quint16)));
         if(dialog.get_FFTflag())
         {
             connect(&m_timer, SIGNAL(timeout()), pt_harmonicProcessor, SLOT(ComputeFrequency()));
@@ -459,26 +403,22 @@ void MainWindow::configure_and_start_session()
         {
             connect(&m_timer, SIGNAL(timeout()), pt_harmonicProcessor, SLOT(CountFrequency()));
         }
-        connect(pt_harmonicProcessor, SIGNAL(HRfrequencyWasUpdated(qreal,qreal,bool)), pt_display, SLOT(updateValues(qreal,qreal,bool)));
         //--------------------------------------------------------------
         pt_harmonicThread->start();
         pt_optionsMenu->setEnabled(true);
-        if(dialog.get_flagVideoFile())
-        {
-            this->openvideofile(dialog.get_stringVideoFile());
-        }
-        else
+
+        if(dialog.getSourceFlag())
         {
             this->opendevice();
         }
+        else
+        {
+            this->openvideofile();
+        }
         m_timer.setInterval( dialog.get_timerValue() );
-        this->onresume();
         this->statusBar()->showMessage(tr("Plot options available through Menu->Options->New plot"));
     }
-    else
-    {
-        this->statusBar()->showMessage(tr("The new session was rejected, you can continue previous session by resume option"));
-    }
+    this->onresume();
 }
 
 //------------------------------------------------------------------------------------------
@@ -548,19 +488,13 @@ void MainWindow::createPlotDialog()
                         pt_plot->set_coordinatesPrecision(0,2);
                         pt_plot->set_DrawRegime(QEasyPlot::FilledTraceRegime);
                         break;
-                    case 3: // PCA 1st projection trace
-                        connect(pt_harmonicProcessor, SIGNAL(PCAProjectionWasUpdated(const qreal*,quint16)), pt_plot, SLOT(set_externalArray(const qreal*,quint16)));
-                        pt_plot->set_axis_names("Frame","Normalised & centered projection on 1-st PCA direction");
-                        pt_plot->set_vertical_Borders(-5.0,5.0);
-                        pt_plot->set_coordinatesPrecision(0,2);
-                    break;
-                    case 4: // Digital filter output
+                    case 3: // Digital filter output
                         connect(pt_harmonicProcessor, SIGNAL(pt_YoutputWasUpdated(const qreal*,quint16)), pt_plot, SLOT(set_externalArray(const qreal*,quint16)));
                         pt_plot->set_axis_names("Frame","Digital derivative after smoothing");
                         pt_plot->set_vertical_Borders(-2.0,2.0);
                         pt_plot->set_coordinatesPrecision(0,2);
                     break;
-                    case 5: // signal phase shift
+                    case 4: // signal phase shift
                         connect(pt_harmonicProcessor, SIGNAL(CNSignalWasUpdated(const qreal*,quint16)), pt_plot, SLOT(set_externalArray(const qreal*,quint16)));
                         pt_plot->set_DrawRegime(QEasyPlot::PhaseRegime);
                         pt_plot->set_axis_names("Signal count","Signal count");
@@ -568,13 +502,6 @@ void MainWindow::createPlotDialog()
                         pt_plot->set_horizontal_Borders(-5.0, 5.0);
                         pt_plot->set_X_Ticks(11);
                         pt_plot->set_coordinatesPrecision(2,2);
-                    break;
-                    case 6: // breath curve
-                        connect(pt_harmonicProcessor, SIGNAL(SlowPPGWasUpdated(const qreal*,quint16)), pt_plot, SLOT(set_externalArray(const qreal*,quint16)));
-                        pt_plot->set_axis_names("Set of frames","SlowPPG");
-                        pt_plot->set_vertical_Borders(-5.0,5.0);
-                        pt_plot->set_X_Ticks(11);
-                        pt_plot->set_coordinatesPrecision(0,2);
                     break;
                 }
             pt_dialogSet[ m_dialogSetCounter ]->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -607,7 +534,6 @@ void MainWindow::createPlotDialog()
 void MainWindow::decrease_dialogSetCounter()
 {
     m_dialogSetCounter--;
-    qWarning("Plot dialogs left: %d", LIMIT_OF_DIALOGS_NUMBER - m_dialogSetCounter);
 }
 
 //-------------------------------------------------------------------------------------------
