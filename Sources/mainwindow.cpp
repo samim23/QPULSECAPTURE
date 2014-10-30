@@ -97,6 +97,36 @@ void MainWindow::createActions()
     pt_openPlotDialog = new QAction(tr("&New plot"), this);
     pt_openPlotDialog->setStatusTip(tr("Create a new window for the visualization of appropriate process"));
     connect(pt_openPlotDialog, SIGNAL(triggered()), this, SLOT(createPlotDialog()));
+
+    pt_recordAct = new QAction(tr("&Record"), this);
+    pt_recordAct->setStatusTip(tr("Save all computation results to output .txt file"));
+    pt_recordAct->setCheckable(true);
+    connect(pt_recordAct, &QAction::triggered, this, &MainWindow::saveRecord);
+
+    pt_colorActGroup = new QActionGroup(this);
+
+    pt_redAct = new QAction(tr("Enroll red"), pt_colorActGroup);
+    pt_redAct->setStatusTip(tr("Process red color channel"));
+    pt_redAct->setCheckable(true);
+
+    pt_greenAct = new QAction(tr("Enroll green"), pt_colorActGroup);
+    pt_greenAct->setStatusTip(tr("Process green color channel"));
+    pt_greenAct->setCheckable(true);
+
+    pt_blueAct = new QAction(tr("Enroll blue"), pt_colorActGroup);
+    pt_blueAct->setStatusTip(tr("Process blue color channel"));
+    pt_blueAct->setCheckable(true);
+
+    pt_greenAct->setChecked(true);
+
+    pt_mapper = new QSignalMapper(this);
+    pt_mapper->setMapping(pt_redAct, QHarmonicProcessor::Red);
+    pt_mapper->setMapping(pt_greenAct, QHarmonicProcessor::Green);
+    pt_mapper->setMapping(pt_blueAct, QHarmonicProcessor::Blue);
+    connect(pt_redAct, SIGNAL(triggered()), pt_mapper, SLOT(map()));
+    connect(pt_greenAct, SIGNAL(triggered()), pt_mapper, SLOT(map()));
+    connect(pt_blueAct, SIGNAL(triggered()), pt_mapper, SLOT(map()));
+    connect(pt_mapper, SIGNAL(mapped(int)), this, SLOT(changeColor(int)));
 }
 
 //------------------------------------------------------------------------------------
@@ -111,6 +141,9 @@ void MainWindow::createMenus()
     //------------------------------------------------
     pt_optionsMenu = menuBar()->addMenu(tr("&Options"));
     pt_optionsMenu->addAction(pt_openPlotDialog);
+    pt_optionsMenu->addAction(pt_recordAct);
+    pt_optionsMenu->addSeparator();
+    pt_optionsMenu->addActions(pt_colorActGroup->actions());
     pt_optionsMenu->setEnabled(false);
 
     //-------------------------------------------------
@@ -365,27 +398,6 @@ void MainWindow::configure_and_start_session()
         connect(pt_harmonicProcessor, SIGNAL(TooNoisy(qreal)), pt_display, SLOT(clearFrequencyString(qreal)));
         connect(pt_harmonicProcessor, SIGNAL(HRfrequencyWasUpdated(qreal,qreal,bool)), pt_display, SLOT(updateValues(qreal,qreal,bool)));
         //---------------------------------------------------------------
-        /*if(dialog.get_flagRecord())
-        {
-            if(m_saveFile.isOpen())
-            {
-                m_saveFile.close();
-            }
-            m_saveFile.setFileName(dialog.get_stringRecord());
-            if(m_saveFile.open(QIODevice::WriteOnly))
-            {
-                m_textStream.setDevice(&m_saveFile);
-
-                m_textStream << "dd.MM.yyyy hh:mm:ss.zzz \t CNSignal \t MeanRed \t MeanGreen \t MeanBlue \t PulseRate, bpm \t SNR, dB\n";
-                connect(pt_harmonicProcessor, SIGNAL(SignalActualValues(qreal,qreal,qreal,qreal,qreal,qreal)), this, SLOT(make_record_to_file(qreal,qreal,qreal,qreal,qreal,qreal)));
-            }
-            else
-            {
-                QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not write a record to file"), QMessageBox::Ok, this, Qt::Dialog);
-                msgBox.exec();
-            }
-        }*/
-        //---------------------------------------------------------------
         if(dialog.get_customPatientFlag())
         {
             if(pt_harmonicProcessor->loadThresholds(dialog.get_stringDistribution().toLocal8Bit().constData(),(QHarmonicProcessor::SexID)dialog.get_patientSex(),dialog.get_patientAge(),(QHarmonicProcessor::TwoSideAlpha)dialog.get_patientPercentile()) == QHarmonicProcessor::FileExistanceError)
@@ -555,6 +567,8 @@ void MainWindow::closeEvent(QCloseEvent*)
     closeAllDialogs();
 }
 
+//-------------------------------------------------------------------------------------------
+
 void MainWindow::closeAllDialogs()
 {
     for(qint8 i = m_dialogSetCounter; i > 0; i--)
@@ -562,4 +576,35 @@ void MainWindow::closeAllDialogs()
         pt_dialogSet[ i-1 ]->close(); // there is no need to explicitly decrement m_dialogSetCounter value because pt_dialogSet[i] was preset to Qt::WA_DeleteOnClose flag and on_destroy of pt_dialogSet[i] 'this' will decrease counter automatically
     };
 }
+
+//--------------------------------------------------------------------------------------------
+
+void MainWindow::saveRecord()
+{
+    if(m_saveFile.isOpen())
+    {
+        m_saveFile.close();
+    }
+    m_saveFile.setFileName(QFileDialog::getSaveFileName(this, tr("Save file"), "/records", "Text file (*.txt)"));
+    if(m_saveFile.open(QIODevice::WriteOnly))
+    {
+        m_textStream.setDevice(&m_saveFile);
+        m_textStream << "dd.MM.yyyy hh:mm:ss.zzz\tCNSignal\tMeanRed\tMeanGreen\tMeanBlue\tPulseRate,bpm\tSNR,dB\n";
+        connect(pt_harmonicProcessor, SIGNAL(SignalActualValues(qreal,qreal,qreal,qreal,qreal,qreal)), this, SLOT(make_record_to_file(qreal,qreal,qreal,qreal,qreal,qreal)));
+    }
+    else
+    {
+        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not write a record file"), QMessageBox::Ok, this, Qt::Dialog);
+        msgBox.exec();
+    }
+}
+
+//--------------------------------------------------------------------------------------------
+
+void MainWindow::changeColor(int value)
+{
+    if(pt_harmonicProcessor)
+        pt_harmonicProcessor->switch_to_channel((QHarmonicProcessor::colorChannel)value);
+}
+
 

@@ -54,11 +54,11 @@ void QSettingsDialog::on_dialBufferlength_valueChanged(int value)
 
 void QSettingsDialog::on_ButtonDefault_clicked()
 {
-    ui->dialDatalength->setValue(8);
-    ui->dialBufferlength->setValue(8);
+    ui->dialDatalength->setValue(7);
+    ui->dialBufferlength->setValue(7);
     ui->checkBoxFFT->setChecked(true);
     ui->horizontalSliderTimer->setValue(2); //
-    ui->checkBoxPatient->setChecked(true);
+    ui->checkBoxPatient->setChecked(false);
     ui->comboBoxPatient->setCurrentIndex(0);
     ui->lineEditPatient->setText("normal_heart_rate_at_rest.xml");
 }
@@ -128,12 +128,12 @@ int QSettingsDialog::get_patientAge() const
     return age;
 }
 
-void QSettingsDialog::on_radioButtonMale_clicked(bool checked)
+void QSettingsDialog::on_radioButtonMale_clicked(bool)
 {
     ui->radioButtonFemale->setChecked(false);
 }
 
-void QSettingsDialog::on_radioButtonFemale_clicked(bool checked)
+void QSettingsDialog::on_radioButtonFemale_clicked(bool)
 {
     ui->radioButtonMale->setChecked(false);
 }
@@ -151,12 +151,12 @@ int QSettingsDialog::get_patientSex() const
         return 0;
 }
 
-void QSettingsDialog::on_radioButtonWebcam_clicked(bool checked)
+void QSettingsDialog::on_radioButtonWebcam_clicked(bool)
 {
     ui->radioButtonVideofile->setChecked(false);
 }
 
-void QSettingsDialog::on_radioButtonVideofile_clicked(bool checked)
+void QSettingsDialog::on_radioButtonVideofile_clicked(bool)
 {
     ui->radioButtonWebcam->setChecked(false);
 }

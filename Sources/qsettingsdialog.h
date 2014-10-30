@@ -47,13 +47,13 @@ private slots:
 
     void on_pushButtonPatient_clicked();
 
-    void on_radioButtonMale_clicked(bool checked);
+    void on_radioButtonMale_clicked(bool);
 
-    void on_radioButtonFemale_clicked(bool checked);
+    void on_radioButtonFemale_clicked(bool );
 
-    void on_radioButtonWebcam_clicked(bool checked);
+    void on_radioButtonWebcam_clicked(bool);
 
-    void on_radioButtonVideofile_clicked(bool checked);
+    void on_radioButtonVideofile_clicked(bool);
 
 private:
     Ui::QSettingsDialog *ui;

@@ -215,7 +215,7 @@ void QHarmonicProcessor::ComputeFrequency()
 
 //----------------------------------------------------------------------------------------------------
 
-void QHarmonicProcessor::switch_to_channel(color_channel value)
+void QHarmonicProcessor::switch_to_channel(colorChannel value)
 {
     m_channel = value;
 }

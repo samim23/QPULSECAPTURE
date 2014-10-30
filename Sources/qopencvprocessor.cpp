@@ -36,10 +36,10 @@ void QOpencvProcessor::updateRect(const cv::Rect &input_rect)
 void QOpencvProcessor::processRegion(const cv::Mat &input)
 {
     cv::Mat output(input); //Copy constructor
-    unsigned int rectwidth = m_cvRect.width;
-    unsigned int rectheight = m_cvRect.height;
-    unsigned int X = m_cvRect.x;
-    unsigned int Y = m_cvRect.y;
+    long rectwidth = m_cvRect.width;
+    long rectheight = m_cvRect.height;
+    long X = m_cvRect.x;
+    long Y = m_cvRect.y;
 
     if( (output.rows <= (Y + rectheight)) || (output.cols <= (X + rectwidth)) )
     {
@@ -56,10 +56,10 @@ void QOpencvProcessor::processRegion(const cv::Mat &input)
         unsigned char *p; // a pointer to store the adresses of image rows
         if(output.channels() == 3)
         {
-            for(unsigned int j = Y; j < Y + rectheight; j++)
+            for( int j = Y; j < Y + rectheight; j++)
             {
                 p = output.ptr(j); //takes pointer to beginning of data on rows
-                for(unsigned int i = X; i < X + rectwidth; i++)
+                for( int i = X; i < X + rectwidth; i++)
                 {
                     blue += p[3*i];
                     green += p[3*i+1];
@@ -69,10 +69,10 @@ void QOpencvProcessor::processRegion(const cv::Mat &input)
         }
         else
         {
-            for(unsigned int j = Y; j < Y + rectheight; j++)
+            for( int j = Y; j < Y + rectheight; j++)
             {
                 p = output.ptr(j);//pointer to beginning of data on rows
-                for(unsigned int i = X; i < X + rectwidth; i++)
+                for( int i = X; i < X + rectwidth; i++)
                 {
                     green += p[i];
                 }
@@ -84,7 +84,7 @@ void QOpencvProcessor::processRegion(const cv::Mat &input)
     m_timeCounter = cv::getTickCount();
     if((rectheight > 0) && (rectwidth > 0))
     {
-        cv::rectangle( output , m_cvRect, cv::Scalar(255,25,25));
+        cv::rectangle( output , m_cvRect, cv::Scalar(15,250,15),1);
         emit colorsEvaluated(red, green, blue, rectwidth*rectheight, m_framePeriod);
     }
     else

@@ -4,8 +4,8 @@
 #include <QObject>
 #include "fftw3.h"
 
-#define BOTTOM_LIMIT 0.7 // in s^-1, it is 42 bpm
-#define TOP_LIMIT 4.5 // in s^-1, it is 270 bpm
+#define BOTTOM_LIMIT 2.5 // in s^-1, it is 150 bpm
+#define TOP_LIMIT 13.0 // in s^-1, it is 780 bpm
 #define SNR_TRESHOLD 2.0 // in most cases this value is suitable when (bufferlength == 256)
 #define HALF_INTERVAL 2 // defines the number of averaging indexes when frequency is evaluated, this value should be >= 1
 #define DIGITAL_FILTER_LENGTH 5 // in counts
@@ -16,7 +16,7 @@ class QHarmonicProcessor : public QObject
 public:
     explicit QHarmonicProcessor(QObject *parent = 0, quint16 length_of_data = 256, quint16 length_of_buffer = 256 );
     ~QHarmonicProcessor();
-    enum color_channel { Red, Green, Blue };
+    enum colorChannel { Red, Green, Blue };
     enum XMLparserError { NoError, FileOpenError, FileExistanceError, ReadError, ParseFailure };
     enum SexID { Male, Female };
     enum TwoSideAlpha { FiftyPercents, TwentyPercents, TenPercents, FivePercents, TwoPercents };
@@ -35,7 +35,7 @@ signals:
 public slots:
     void WriteToDataOneColor(unsigned long red, unsigned long green, unsigned long blue, unsigned long area, double time);
     void ComputeFrequency();
-    void switch_to_channel(color_channel value);
+    void switch_to_channel(colorChannel value);
     qreal CountFrequency(); // inertion of a result depends on how frequently this function is called, if with period of 1 sec result is averaged frequency on 1 sec, if 1 min then averaged on 1 min etc.
     void set_zerocrossingCounter(quint16 value);
     int loadThresholds(const char *fileName, SexID sex, int age, TwoSideAlpha alpha);
@@ -59,7 +59,7 @@ private:
     quint16 loop(qint16) const; //a function that return a loop-index
     quint16 loop_for_ptX(qint16) const; //a function that return a loop-index
     fftw_plan m_plan;
-    color_channel m_channel; // determines which color channel is enrolled by WriteToDataOneColor(...) method
+    colorChannel m_channel; // determines which color channel is enrolled by WriteToDataOneColor(...) method
     qreal *pt_Youtput; // a pointer to a vector of digital filter output
     qreal *pt_Xoutput; // for intermediate result storage
     qreal pt_Tempoutput[2]; // to store two close counts from digital derivative

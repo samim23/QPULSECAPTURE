@@ -17,6 +17,8 @@
 #include <QProcess>
 #include <QFile>
 #include <QTextStream>
+#include <QActionGroup>
+#include <QSignalMapper>
 
 #include "qimagewidget.h"
 #include "qopencvprocessor.h"
@@ -57,6 +59,8 @@ public slots:
     void onresume();
     void configure_and_start_session();
     void make_record_to_file(qreal signalValue, qreal meanRed, qreal meanGreen, qreal meanBlue, qreal freqValue, qreal snrValue);
+    void saveRecord();
+    void changeColor(int value);
 
 private:
     void createActions();
@@ -76,6 +80,12 @@ private:
     QAction *pt_deviceSetAct;
     QAction *pt_DirectShowAct;
     QAction *pt_openPlotDialog;
+    QAction *pt_recordAct;
+    QAction *pt_redAct;
+    QAction *pt_greenAct;
+    QAction *pt_blueAct;
+    QActionGroup *pt_colorActGroup;
+    QSignalMapper *pt_mapper;
     QMenu *pt_fileMenu;
     QMenu *pt_optionsMenu;
     QMenu *pt_deviceMenu;

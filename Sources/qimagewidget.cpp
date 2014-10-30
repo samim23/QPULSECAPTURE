@@ -45,6 +45,8 @@ void QImageWidget::paintEvent(QPaintEvent* )
     QRect temp_rect = make_proportional_rect(this->rect(), opencv_image.cols, opencv_image.rows);
     painter.drawImage( temp_rect, qt_image); // Draw inside widget, the image is scaled to fit the rectangle   
     drawStrings(painter, temp_rect);          // Will draw m_informationString on the widget
+
+
 }
 
 //------------------------------------------------------------------------------------
