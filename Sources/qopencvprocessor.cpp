@@ -84,7 +84,7 @@ void QOpencvProcessor::processRegion(const cv::Mat &input)
     m_timeCounter = cv::getTickCount();
     if((rectheight > 0) && (rectwidth > 0))
     {
-        cv::rectangle( output , m_cvRect, cv::Scalar(15,250,15),1);
+        cv::rectangle( output , m_cvRect, cv::Scalar(55,225,55), 2);
         emit colorsEvaluated(red, green, blue, rectwidth*rectheight, m_framePeriod);
     }
     else

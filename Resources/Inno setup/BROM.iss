@@ -42,13 +42,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Programing\QPULSECAPTURE\Install\build-Sources-Desktop_Qt_5_2_1_MSVC2010_32bit-Release\release\BROM.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programing\QPULSECAPTURE\Install\build-Sources-Desktop_Qt_5_2_1_MSVC2010_32bit-Release\WVCF_utility.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Programing\QPULSECAPTURE\Resources\WVCF_utility.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programing\QPULSECAPTURE\Resources\FFTW\fftw3-32\libfftw3-3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\opencv\build\x86\{#OpencvCompiler}\bin\opencv_core248.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\opencv\build\x86\{#OpencvCompiler}\bin\opencv_ffmpeg248.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\opencv\build\x86\{#OpencvCompiler}\bin\opencv_highgui248.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\opencv\build\x86\{#OpencvCompiler}\bin\opencv_imgproc248.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Qt\{#QtVersion}\{#QtCompiler}\plugins\platforms\qwindows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Qt\{#QtVersion}\{#QtCompiler}\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "C:\Qt\{#QtVersion}\{#QtCompiler}\bin\icudt51.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Qt\{#QtVersion}\{#QtCompiler}\bin\icuin51.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Qt\{#QtVersion}\{#QtCompiler}\bin\icuuc51.dll"; DestDir: "{app}"; Flags: ignoreversion

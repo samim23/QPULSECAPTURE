@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent):
     pt_infoLabel->setFrameStyle(QFrame::Box | QFrame::Sunken);
     pt_infoLabel->setAlignment(Qt::AlignCenter);
     pt_infoLabel->setWordWrap( true );
-    pt_infoLabel->setFont( QFont("MS Shell Dlg 2", 14, QFont::Normal) );
+    pt_infoLabel->setFont( QFont("MS Shell Dlg 2", 12, QFont::Normal) );
     pt_mainLayout->addWidget(pt_infoLabel);
 
     //--------------------------------------------------------------
@@ -398,6 +398,12 @@ void MainWindow::configure_and_start_session()
         connect(pt_harmonicProcessor, SIGNAL(TooNoisy(qreal)), pt_display, SLOT(clearFrequencyString(qreal)));
         connect(pt_harmonicProcessor, SIGNAL(HRfrequencyWasUpdated(qreal,qreal,bool)), pt_display, SLOT(updateValues(qreal,qreal,bool)));
         //---------------------------------------------------------------
+        if(m_saveFile.isOpen())
+        {
+            m_saveFile.close();
+            pt_recordAct->setChecked(false);
+        }
+        //---------------------------------------------------------------
         if(dialog.get_customPatientFlag())
         {
             if(pt_harmonicProcessor->loadThresholds(dialog.get_stringDistribution().toLocal8Bit().constData(),(QHarmonicProcessor::SexID)dialog.get_patientSex(),dialog.get_patientAge(),(QHarmonicProcessor::TwoSideAlpha)dialog.get_patientPercentile()) == QHarmonicProcessor::FileExistanceError)
@@ -588,14 +594,14 @@ void MainWindow::saveRecord()
     m_saveFile.setFileName(QFileDialog::getSaveFileName(this, tr("Save file"), "/records", "Text file (*.txt)"));
     if(m_saveFile.open(QIODevice::WriteOnly))
     {
+        pt_recordAct->setChecked(true);
         m_textStream.setDevice(&m_saveFile);
         m_textStream << "dd.MM.yyyy hh:mm:ss.zzz\tCNSignal\tMeanRed\tMeanGreen\tMeanBlue\tPulseRate,bpm\tSNR,dB\n";
         connect(pt_harmonicProcessor, SIGNAL(SignalActualValues(qreal,qreal,qreal,qreal,qreal,qreal)), this, SLOT(make_record_to_file(qreal,qreal,qreal,qreal,qreal,qreal)));
     }
     else
     {
-        QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not write a record file"), QMessageBox::Ok, this, Qt::Dialog);
-        msgBox.exec();
+        pt_recordAct->setChecked(false);
     }
 }
 
