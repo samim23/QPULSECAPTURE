@@ -22,6 +22,7 @@ signals:
     void changeColorChannel(int value);
     void updatePCAMode(bool value);
     void setEstimationInterval(int value);
+    void updatePruning(bool value);
 
 public slots:
     void updateHarmonicProcessor(unsigned long red, unsigned long green, unsigned long blue, unsigned long area, double period);

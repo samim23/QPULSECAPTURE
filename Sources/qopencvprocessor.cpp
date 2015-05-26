@@ -22,6 +22,7 @@ QOpencvProcessor::QOpencvProcessor(QObject *parent):
     v_pixelSet = NULL;
     m_seekCalibColors = false;
     m_calibFlag = false;
+    m_blurSize = 8;
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -112,7 +113,7 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     if(faces_vector.size() != 0) // if classifier find something, then do...
     {
         cv::Mat blurRegion(output, faces_vector[0]);
-        cv::blur(blurRegion, blurRegion, cv::Size(5,5));
+        cv::blur(blurRegion, blurRegion, cv::Size(m_blurSize, m_blurSize));
 
         X = faces_vector[0].x; // take actual coordinate
         Y = faces_vector[0].y; // take actual coordinate
@@ -294,9 +295,15 @@ void QOpencvProcessor::rectProcess(const cv::Mat &input)
     unsigned long area = 0;
     //-------------------------------------------------------------------------
     if((rectheight > 0) && (rectwidth > 0))
+<<<<<<< HEAD
     {
         cv::Mat blurRegion(output, m_cvRect);
         cv::blur(blurRegion, blurRegion, cv::Size(5,5));
+=======
+    {      
+        cv::Mat blurRegion(output, m_cvRect);
+        cv::blur(blurRegion, blurRegion, cv::Size(m_blurSize, m_blurSize));
+>>>>>>> pruning
 
         unsigned char *p; // a pointer to store the adresses of image rows
         if(output.channels() == 3)
@@ -429,7 +436,6 @@ void QOpencvProcessor::setFullFaceFlag(bool value)
 
 //------------------------------------------------------------------------------------------------
 
-
 void QOpencvProcessor::mapProcess(const cv::Mat &input)
 {
     cv::Mat output(input);
@@ -503,6 +509,8 @@ void QOpencvProcessor::mapProcess(const cv::Mat &input)
     }
 }
 
+//------------------------------------------------------------------------------------------------
+
 void QOpencvProcessor::setMapCellSize(quint16 sizeX, quint16 sizeY)
 {
     m_mapCellSizeX = sizeX;
@@ -515,10 +523,14 @@ void QOpencvProcessor::setMapCellSize(quint16 sizeX, quint16 sizeY)
     v_pixelSet = new unsigned char*[m_mapCellSizeY];
 }
 
+//------------------------------------------------------------------------------------------------
+
 void QOpencvProcessor::setSkinSearchingFlag(bool value)
 {
     m_skinFlag = value;
 }
+
+//------------------------------------------------------------------------------------------------
 
 void QOpencvProcessor::calibrate(bool value)
 {
@@ -531,3 +543,15 @@ void QOpencvProcessor::calibrate(bool value)
         m_calibMean = 0.0;
     }
 }
+
+//------------------------------------------------------------------------------------------------
+
+void QOpencvProcessor::setBlurSize(int value)
+{
+    if( value > 0 )
+    {
+        m_blurSize = (quint16)value;
+    }
+}
+
+//------------------------------------------------------------------------------------------------

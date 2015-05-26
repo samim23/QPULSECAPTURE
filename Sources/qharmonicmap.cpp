@@ -30,6 +30,7 @@ QHarmonicProcessorMap::QHarmonicProcessorMap(QObject *parent, quint32 width, qui
         connect(this, SIGNAL(setEstimationInterval(int)), &v_processors[i], SLOT(setEstiamtionInterval(int)));
         connect(this, SIGNAL(changeColorChannel(int)), &v_processors[i], SLOT(switchColorMode(int)));
         connect(this, SIGNAL(updatePCAMode(bool)), &v_processors[i], SLOT(setPCAMode(bool)));
+        connect(this, SIGNAL(updatePruning(bool)), &v_processors[i], SLOT(setPruning(bool)));
     }
     for(quint16 i = 0; i < m_threadCount ; i++)
     {

@@ -14,6 +14,7 @@ TARGET =    Videoplethysmogaphy
 TEMPLATE =  app
 VERSION =   3.0.0.3_b
 
+
 DEFINES +=  APP_NAME=\\\"$${TARGET}\\\" \
             APP_VERSION=\\\"$${VERSION}\\\"
 

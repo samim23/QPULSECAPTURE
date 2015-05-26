@@ -15,8 +15,10 @@
 
 #define BREATH_TOP_LIMIT 0.8 // in s^-1, it is 48 rpm
 #define BREATH_BOTTOM_LIMIT 0.0 // in s^-1, it is 0 rpm
-#define BREATH_HALF_INTERVAL 1
-#define BREATH_SNR_TRESHOLD 5.0
+#define BREATH_HALF_INTERVAL 2
+#define BREATH_SNR_TRESHOLD 2.0
+
+#define PRUNING_SKO_COEFF 3
 
 class QHarmonicProcessor : public QObject
 {
@@ -72,7 +74,7 @@ public slots:
     quint16 getBreathAverage() const;
     quint16 getBreathCNInterval() const;
     void setSnrControl(bool value);
-
+    void setPruning(bool value);
 
 private:
     qreal *v_HeartSignal;  //a pointer to centered and normalized data (typedefinition from fftw3.h, a single precision complex float number type)
@@ -129,6 +131,8 @@ private:
     quint16 m_BreathAverageInterval;
     quint16 m_BreathCNInterval;
     qreal m_BreathSNR;
+
+    bool m_pruningFlag;
 };
 
 // inline, for speed, must therefore reside in header file
