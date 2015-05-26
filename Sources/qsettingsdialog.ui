@@ -67,7 +67,7 @@
     </attribute>
     <widget class="QGroupBox" name="groupBoxCascade">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -120,7 +120,7 @@
       <string>Use cascade classifier for region detection</string>
      </property>
      <property name="checked">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="Line" name="line">
@@ -517,10 +517,20 @@
         <family>MS Shell Dlg 2</family>
        </font>
       </property>
+      <property name="dateTime">
+       <datetime>
+        <hour>0</hour>
+        <minute>0</minute>
+        <second>0</second>
+        <year>2015</year>
+        <month>5</month>
+        <day>23</day>
+       </datetime>
+      </property>
       <property name="date">
        <date>
-        <year>1988</year>
-        <month>8</month>
+        <year>2015</year>
+        <month>5</month>
         <day>23</day>
        </date>
       </property>

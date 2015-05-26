@@ -10,9 +10,9 @@ QT +=   core \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET =    QPULSECAPTURE
+TARGET =    Videoplethysmogaphy
 TEMPLATE =  app
-VERSION =   3.0.0.2
+VERSION =   3.0.0.3_b
 
 DEFINES +=  APP_NAME=\\\"$${TARGET}\\\" \
             APP_VERSION=\\\"$${VERSION}\\\"
@@ -52,8 +52,8 @@ FORMS += qsettingsdialog.ui \
 TRANSLATIONS += $$PWD/../Resources/Docs/Translation_Rus.ts
 RC_ICONS = $$PWD/../Resources/Docs/App.ico
 
-#CONFIG(release, debug|release): DEFINES += QT_NO_WARNING_OUTPUT \
-#                                           QT_NO_DEBUG_OUTPUT
+CONFIG(release, debug|release): DEFINES += QT_NO_WARNING_OUTPUT \
+                                          QT_NO_DEBUG_OUTPUT
 
 
 include(OPENCV.pri)

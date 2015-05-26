@@ -151,7 +151,7 @@ void MainWindow::createActions()
     pt_experimentalAct->setCheckable(true);
     pt_colorMapper->setMapping(pt_experimentalAct, 4);
     connect(pt_experimentalAct,SIGNAL(triggered()), pt_colorMapper, SLOT(map()));
-    pt_greenAct->setChecked(true);
+    pt_allAct->setChecked(true);
 
     pt_pcaAct = new QAction(tr("PCA align"), this);
     pt_pcaAct->setStatusTip(tr("Control PCA alignment, affects on result only in harmonic analysis mode"));
@@ -181,12 +181,12 @@ void MainWindow::createActions()
     pt_imageAct->setChecked(true);
     connect(pt_imageAct, SIGNAL(triggered(bool)), pt_display, SLOT(setImageFlag(bool)));
 
-    pt_calibAct = new QAction(tr("&Calibrate"), this);
+    pt_calibAct = new QAction(tr("&Signals"), this);
     pt_calibAct->setStatusTip(tr("Calibrate colors on selected region"));
     pt_calibAct->setCheckable(true);
     pt_calibAct->setChecked(false);
 
-    pt_measRecAct = new QAction(tr("&MeasureRec"), this);
+    pt_measRecAct = new QAction(tr("&Measurements"), this);
     pt_measRecAct->setStatusTip(tr("Start to record heart rate & breath rate in to output text file"));
     pt_measRecAct->setCheckable(true);
     connect(pt_measRecAct, SIGNAL(triggered()), this, SLOT(startMeasurementsRecord()));
@@ -496,8 +496,9 @@ void MainWindow::callDirectShowSdialog()
 void MainWindow::configure_and_start_session()
 {
     this->onpause();
-    if(m_settingsDialog.exec() == QDialog::Accepted)
-    {     
+    QTimer::singleShot(100 ,&m_settingsDialog, &QDialog::accept);
+    if(m_settingsDialog.exec() == QDialog::Accepted)       
+    {
         closeAllDialogs();
         if(pt_harmonicProcessor)
         {
@@ -582,7 +583,7 @@ void MainWindow::configure_and_start_session()
         m_timer.setInterval( m_settingsDialog.get_timerValue() );
         pt_optionsMenu->setEnabled(true);
         pt_RecordsMenu->setEnabled(true);
-        pt_greenAct->trigger(); // because green channel is default in QHarmonicProcessor
+        pt_allAct->trigger(); // because green channel is default in QHarmonicProcessor
 
         if(m_settingsDialog.get_flagVideoFile())
         {
@@ -604,6 +605,7 @@ void MainWindow::configure_and_start_session()
         }
         this->statusBar()->showMessage(tr("Plot options available through Menu->Options->New plot"));
         m_sessionsCounter++;
+        pt_DirectShowAct->trigger();
     } else {
         //pt_optionsMenu->setEnabled(false);
         //emit closeVideo();
