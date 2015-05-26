@@ -295,15 +295,9 @@ void QOpencvProcessor::rectProcess(const cv::Mat &input)
     unsigned long area = 0;
     //-------------------------------------------------------------------------
     if((rectheight > 0) && (rectwidth > 0))
-<<<<<<< HEAD
     {
         cv::Mat blurRegion(output, m_cvRect);
-        cv::blur(blurRegion, blurRegion, cv::Size(5,5));
-=======
-    {      
-        cv::Mat blurRegion(output, m_cvRect);
         cv::blur(blurRegion, blurRegion, cv::Size(m_blurSize, m_blurSize));
->>>>>>> pruning
 
         unsigned char *p; // a pointer to store the adresses of image rows
         if(output.channels() == 3)

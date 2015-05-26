@@ -12,7 +12,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET =    Videoplethysmogaphy
 TEMPLATE =  app
-VERSION =   3.0.0.3_b
+VERSION =   3.0.0.4
 
 
 DEFINES +=  APP_NAME=\\\"$${TARGET}\\\" \

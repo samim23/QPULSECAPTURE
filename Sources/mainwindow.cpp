@@ -151,10 +151,6 @@ void MainWindow::createActions()
     pt_experimentalAct->setCheckable(true);
     pt_colorMapper->setMapping(pt_experimentalAct, 4);
     connect(pt_experimentalAct,SIGNAL(triggered()), pt_colorMapper, SLOT(map()));
-<<<<<<< HEAD
-    pt_allAct->setChecked(true);
-=======
->>>>>>> pruning
 
     pt_pcaAct = new QAction(tr("PCA align"), this);
     pt_pcaAct->setStatusTip(tr("Control PCA alignment, affects on result only in harmonic analysis mode"));
@@ -505,7 +501,7 @@ void MainWindow::callDirectShowSdialog()
 void MainWindow::configure_and_start_session()
 {
     this->onpause();
-    QTimer::singleShot(100 ,&m_settingsDialog, &QDialog::accept);
+    QTimer::singleShot(100 ,&m_settingsDialog, SLOT(accept()));
     if(m_settingsDialog.exec() == QDialog::Accepted)       
     {
         closeAllDialogs();
@@ -594,12 +590,9 @@ void MainWindow::configure_and_start_session()
         m_timer.setInterval( m_settingsDialog.get_timerValue() );
         pt_optionsMenu->setEnabled(true);
         pt_RecordsMenu->setEnabled(true);
-<<<<<<< HEAD
-        pt_allAct->trigger(); // because green channel is default in QHarmonicProcessor
-=======
-        pt_greenAct->trigger(); //because green channel is default in QHarmonicProcessor
+
+        pt_greenAct->trigger(); // because green channel is default in QHarmonicProcessor
         pt_pruningAct->setChecked(false);
->>>>>>> pruning
 
         if(m_settingsDialog.get_flagVideoFile())
         {

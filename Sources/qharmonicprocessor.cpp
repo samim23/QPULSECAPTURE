@@ -14,7 +14,7 @@ QHarmonicProcessor::QHarmonicProcessor(QObject *parent, quint16 length_of_data, 
     m_BreathRate(0.0),
     m_BreathSNR(-5.0),
     f_PCA(false),
-    m_ColorChannel(RGB),
+    m_ColorChannel(Green),
     m_zerocrossing(0),
     m_PulseCounter(4),
     m_leftThreshold(70),
@@ -27,12 +27,8 @@ QHarmonicProcessor::QHarmonicProcessor(QObject *parent, quint16 length_of_data, 
     m_BreathStrobeCounter(0),
     m_BreathCurpos(0),
     m_BreathAverageInterval(64),
-<<<<<<< HEAD
-    m_BreathCNInterval(32)
-=======
     m_BreathCNInterval(12),
     m_pruningFlag(false)
->>>>>>> pruning
 {
     // Memory allocation
     v_RawCh1 = new qreal[m_DataLength];
@@ -219,42 +215,6 @@ void QHarmonicProcessor::EnrollData(unsigned long red, unsigned long green, unsi
                 v_RawCh1[curpos] = (qreal)PCA_RAW_RGB(pos, 2);
                 break;
         }
-
-        ///------------------------------------------Breath signal part-------------------------------------------
-        v_BreathTime[m_BreathCurpos] += time;
-        m_BreathStrobeCounter =  (++m_BreathStrobeCounter) % m_BreathStrobe;
-        if(m_BreathStrobeCounter ==  0)
-        {
-            ///Averaging from VPG
-            m_MeanCh1 = 0.0;
-            for(quint16 i = 0; i < m_BreathAverageInterval; i++)
-            {
-                m_MeanCh1 += v_RawCh1[loop(curpos - i)];
-            }
-            v_RawBreathSignal[m_BreathCurpos] = m_MeanCh1 / m_BreathAverageInterval;
-
-            ///Centering and normalization
-            m_MeanCh1 = 0.0;
-            for(quint16 i = 0; i < m_BreathCNInterval; i++)
-            {
-                m_MeanCh1 += v_RawBreathSignal[loop(m_BreathCurpos - i)];
-            }
-            m_MeanCh1 /= m_BreathCNInterval;
-            qreal temp_sko = 0.0;
-            for(quint16 i = 0; i < m_BreathCNInterval; i++)
-            {
-                temp_sko += (v_RawBreathSignal[loop(m_BreathCurpos - i)] - m_MeanCh1)*(v_RawBreathSignal[loop(m_BreathCurpos - i)] - m_MeanCh1);
-            }
-            temp_sko = sqrt(temp_sko / (m_BreathCNInterval - 1 ) );
-            if(temp_sko < 0.01)
-                temp_sko = 1.0;
-            v_BreathSignal[m_BreathCurpos] = ((( v_RawBreathSignal[m_BreathCurpos] - m_MeanCh1 ) / temp_sko) + v_BreathSignal[loop(m_BreathCurpos - 1)] + v_BreathSignal[loop(m_BreathCurpos - 2)]  ) / 3.0;
-            emit breathSignalUpdated(v_BreathSignal, m_DataLength);
-            m_BreathCurpos = (++m_BreathCurpos) % m_DataLength;
-            v_BreathTime[m_BreathCurpos] = 0.0;
-        }
-        ///--------------------------------------------End of breath signal part-------------------------------------------------
-
         m_MeanCh1 = 0.0;
         for(quint16 i = 0; i < m_estimationInterval; i++)
         {
@@ -279,6 +239,42 @@ void QHarmonicProcessor::EnrollData(unsigned long red, unsigned long green, unsi
     //v_HeartSignal[curpos] = ( v_HeartCNSignal[loopInput(curpos)] + v_HeartSignal[loop(curpos - 1)] ) / 2.0;
     v_HeartSignal[curpos] = ( v_HeartCNSignal[loopInput(curpos)] + v_HeartCNSignal[loopInput(curpos - 1)] + v_HeartSignal[loop(curpos - 1)] + v_HeartSignal[loop(curpos - 2)] ) / 4.0;
     emit heartSignalUpdated(v_HeartSignal, m_DataLength);
+
+    ///------------------------------------------Breath signal part-------------------------------------------
+    v_BreathTime[m_BreathCurpos] += time;
+    m_BreathStrobeCounter =  (++m_BreathStrobeCounter) % m_BreathStrobe;
+    if(m_BreathStrobeCounter ==  0)
+    {
+        ///Averaging from VPG
+        m_MeanCh1 = 0.0;
+        for(quint16 i = 0; i < m_BreathAverageInterval; i++)
+        {
+            m_MeanCh1 += v_RawCh1[loop(curpos - i)];
+        }
+        v_RawBreathSignal[m_BreathCurpos] = m_MeanCh1 / m_BreathAverageInterval;
+
+        ///Centering and normalization
+        m_MeanCh1 = 0.0;
+        for(quint16 i = 0; i < m_BreathCNInterval; i++)
+        {
+            m_MeanCh1 += v_RawBreathSignal[loop(m_BreathCurpos - i)];
+        }
+        m_MeanCh1 /= m_BreathCNInterval;
+        qreal temp_sko = 0.0;
+        for(quint16 i = 0; i < m_BreathCNInterval; i++)
+        {
+            temp_sko += (v_RawBreathSignal[loop(m_BreathCurpos - i)] - m_MeanCh1)*(v_RawBreathSignal[loop(m_BreathCurpos - i)] - m_MeanCh1);
+        }
+        temp_sko = sqrt(temp_sko / (m_BreathCNInterval - 1 ) );
+        if(temp_sko < 0.01)
+            temp_sko = 1.0;
+        v_BreathSignal[m_BreathCurpos] = ((( v_RawBreathSignal[m_BreathCurpos] - m_MeanCh1 ) / temp_sko) + v_BreathSignal[loop(m_BreathCurpos - 1)] + v_BreathSignal[loop(m_BreathCurpos - 2)]  ) / 3.0;
+        emit breathSignalUpdated(v_BreathSignal, m_DataLength);
+        m_BreathCurpos = (++m_BreathCurpos) % m_DataLength;
+        v_BreathTime[m_BreathCurpos] = 0.0;
+    }
+    ///--------------------------------------------End of breath signal part-------------------------------------------------
+
 
     //----------------------------------------------------------------------------
     qreal outputValue = 0.0;
