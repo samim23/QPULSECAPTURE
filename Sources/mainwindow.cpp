@@ -119,7 +119,7 @@ void MainWindow::createActions()
     pt_openPlotDialog->setStatusTip(tr("Create a new window for the visualization of appropriate process"));
     connect(pt_openPlotDialog, SIGNAL(triggered()), this, SLOT(createPlotDialog()));
 
-    pt_recordAct = new QAction(tr("&SignalsRec"), this);
+    pt_recordAct = new QAction(tr("&Signals"), this);
     pt_recordAct->setStatusTip(tr("Start to record signals counts in to output text file"));
     connect(pt_recordAct, SIGNAL(triggered()), this, SLOT(startRecord()));
     pt_recordAct->setCheckable(true);
@@ -151,7 +151,6 @@ void MainWindow::createActions()
     pt_experimentalAct->setCheckable(true);
     pt_colorMapper->setMapping(pt_experimentalAct, 4);
     connect(pt_experimentalAct,SIGNAL(triggered()), pt_colorMapper, SLOT(map()));
-    pt_greenAct->setChecked(true);
 
     pt_pcaAct = new QAction(tr("PCA align"), this);
     pt_pcaAct->setStatusTip(tr("Control PCA alignment, affects on result only in harmonic analysis mode"));
@@ -186,10 +185,14 @@ void MainWindow::createActions()
     pt_calibAct->setCheckable(true);
     pt_calibAct->setChecked(false);
 
-    pt_measRecAct = new QAction(tr("&MeasureRec"), this);
+    pt_measRecAct = new QAction(tr("&Measurements"), this);
     pt_measRecAct->setStatusTip(tr("Start to record heart rate & breath rate in to output text file"));
     pt_measRecAct->setCheckable(true);
     connect(pt_measRecAct, SIGNAL(triggered()), this, SLOT(startMeasurementsRecord()));
+
+    pt_pruningAct = new QAction(tr("&Pruning"), this);
+    pt_pruningAct->setStatusTip(tr("Toogles color pruning"));
+    pt_pruningAct->setCheckable(true);
 }
 
 //------------------------------------------------------------------------------------
@@ -210,6 +213,8 @@ void MainWindow::createMenus()
     pt_colormodeMenu->addActions(pt_colorActGroup->actions());
     pt_modeMenu = pt_optionsMenu->addMenu(tr("&Mode"));
     pt_modeMenu->addAction(pt_pcaAct);
+    pt_modeMenu->addSeparator();
+    pt_modeMenu->addAction(pt_pruningAct);
     pt_modeMenu->addSeparator();
     pt_modeMenu->addAction(pt_skinAct);
     pt_modeMenu->addAction(pt_calibAct);
@@ -576,13 +581,16 @@ void MainWindow::configure_and_start_session()
         connect(pt_harmonicProcessor, SIGNAL(breathTooNoisy(qreal)), pt_display, SLOT(clearBreathRateString(qreal)));
         connect(pt_colorMapper, SIGNAL(mapped(int)), pt_harmonicProcessor, SLOT(switchColorMode(int)));
         connect(pt_pcaAct, SIGNAL(triggered(bool)), pt_harmonicProcessor, SLOT(setPCAMode(bool)));
+        connect(pt_pruningAct, SIGNAL(triggered(bool)), pt_harmonicProcessor, SLOT(setPruning(bool)));
         connect(pt_harmonicProcessor, SIGNAL(CurrentValues(qreal,qreal,qreal,qreal)), this, SLOT(make_record_to_file(qreal,qreal,qreal,qreal)));
+
         pt_harmonicThread->start();
 
         m_timer.setInterval( m_settingsDialog.get_timerValue() );
         pt_optionsMenu->setEnabled(true);
         pt_RecordsMenu->setEnabled(true);
-        pt_greenAct->trigger(); // because green channel is default in QHarmonicProcessor
+        pt_greenAct->trigger(); //because green channel is default in QHarmonicProcessor
+        pt_pruningAct->setChecked(false);
 
         if(m_settingsDialog.get_flagVideoFile())
         {
@@ -599,7 +607,7 @@ void MainWindow::configure_and_start_session()
                 if(m_sessionsCounter == 0)
                     QTimer::singleShot(1500, this, SLOT(onresume())); // should solve issue with first launch suspension
                 else
-                    this->onresume();     // should solve issue with first launch suspension
+                    this->onresume(); // should solve issue with first launch suspension
             }
         }
         this->statusBar()->showMessage(tr("Plot options available through Menu->Options->New plot"));
@@ -876,6 +884,7 @@ void MainWindow::openMapDialog()
                     connect(pt_map, SIGNAL(mapUpdated(const qreal*,quint32,quint32,qreal,qreal)), pt_display, SLOT(updateMap(const qreal*,quint32,quint32,qreal,qreal)));
                     connect(pt_videoCapture, SIGNAL(frame_was_captured(cv::Mat)), pt_opencvProcessor, SLOT(mapProcess(cv::Mat)), Qt::BlockingQueuedConnection);
                     connect(pt_pcaAct, SIGNAL(triggered(bool)), pt_map, SIGNAL(updatePCAMode(bool)));
+                    connect(pt_pruningAct, SIGNAL(triggered(bool)), pt_map, SIGNAL(updatePruning(bool)));
                     connect(pt_colorMapper, SIGNAL(mapped(int)), pt_map, SIGNAL(changeColorChannel(int)));
                     connect(pt_mapThread, SIGNAL(finished()), pt_mapThread, SLOT(deleteLater()));
                     pt_mapThread->start(QThread::HighestPriority);
@@ -919,8 +928,6 @@ void MainWindow::openProcessingDialog()
 
 void MainWindow::startMeasurementsRecord()
 {
-
-
     if(m_measurementsFile.isOpen())
     {
         m_measurementsFile.close();
@@ -957,6 +964,8 @@ void MainWindow::startMeasurementsRecord()
     }
 }
 
+//------------------------------------------------------------------------------------
+
 void MainWindow::updateMeasurementsRecord(qreal heartRate, qreal heartSNR, qreal breathRate, qreal breathSNR)
 {
     if(m_measurementsFile.isOpen())
@@ -967,5 +976,7 @@ void MainWindow::updateMeasurementsRecord(qreal heartRate, qreal heartSNR, qreal
                              << "\t" << breathSNR << "\n";
     }
 }
+
+//------------------------------------------------------------------------------------
 
 
