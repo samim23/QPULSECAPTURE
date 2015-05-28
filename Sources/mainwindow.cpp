@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent):
     setWindowTitle(APP_NAME);
     setMinimumSize(320, 240);
 
-    pt_centralWidget = new QBackgroundWidget(NULL, palette().color(backgroundRole()));
+    pt_centralWidget = new QBackgroundWidget(NULL, QString(":/Images/Logo.png"));
     pt_centralWidgetLayout = new QVBoxLayout();
     this->setCentralWidget(pt_centralWidget);
     pt_centralWidget->setLayout(pt_centralWidgetLayout);
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent):
     m_timer.stop();
 
     //--------------------------------------------------------------
-    resize(570, 480);
+    this->showMaximized();
     statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 }
 //------------------------------------------------------------------------------------
