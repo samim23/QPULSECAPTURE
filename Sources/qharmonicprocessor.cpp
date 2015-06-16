@@ -268,7 +268,7 @@ void QHarmonicProcessor::EnrollData(unsigned long red, unsigned long green, unsi
         temp_sko = sqrt(temp_sko / (m_BreathCNInterval - 1 ) );
         if(temp_sko < 0.01)
             temp_sko = 1.0;
-        v_BreathSignal[m_BreathCurpos] = ( v_RawBreathSignal[m_BreathCurpos] - m_MeanCh1 ) / temp_sko;
+        v_BreathSignal[m_BreathCurpos] = ((( v_RawBreathSignal[m_BreathCurpos] - m_MeanCh1 ) / temp_sko) + v_BreathSignal[loop(m_BreathCurpos - 1)] ) / 2.0;
         emit breathSignalUpdated(v_BreathSignal, m_DataLength);
         m_BreathCurpos = (++m_BreathCurpos) % m_DataLength;
         v_BreathTime[m_BreathCurpos] = 0.0;
