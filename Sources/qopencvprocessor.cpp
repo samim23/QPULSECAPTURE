@@ -18,7 +18,7 @@ QOpencvProcessor::QOpencvProcessor(QObject *parent):
     m_cvRect.height = 0;
     m_framePeriod = 0.0;
     m_fullFaceFlag = true;
-    m_skinFlag = true;   
+    m_skinFlag = false;
     v_pixelSet = NULL;
     m_seekCalibColors = false;
     m_calibFlag = false;

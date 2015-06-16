@@ -6,12 +6,12 @@
 #include "ap.h" // ALGLIB types
 #include "dataanalysis.h" // ALGLIB functions
 
-#define BOTTOM_LIMIT 0.7 // in s^-1, it is 42 bpm
-#define TOP_LIMIT 4.5 // in s^-1, it is 270 bpm
+#define BOTTOM_LIMIT 1.0 // in s^-1,
+#define TOP_LIMIT 3.0 // in s^-1,
 #define SNR_TRESHOLD 2.0 // in most cases this value is suitable when (m_BufferLength == 256)
 #define HALF_INTERVAL 2 // defines the number of averaging indexes when frequency is evaluated, this value should be >= 1
 #define DIGITAL_FILTER_LENGTH 5 // in counts
-#define MEAN_INTERVAL 10 // should be greater than one, but less than m_DataLength, determines initial value of m_estimationinterval
+#define MEAN_INTERVAL 13 // should be greater than one, but less than m_DataLength, determines initial value of m_estimationinterval
 
 #define BREATH_TOP_LIMIT 1.0 // in s^-1, it is 48 rpm
 #define BREATH_BOTTOM_LIMIT 0.0 // in s^-1, it is 0 rpm

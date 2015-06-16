@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
 {
     setWindowTitle(APP_NAME);
-    setMinimumSize(320, 240);
+    setMinimumSize(640, 480);
 
     pt_centralWidget = new QBackgroundWidget(NULL, QString(":/Images/Logo.png"));
     pt_centralWidgetLayout = new QVBoxLayout();
@@ -168,7 +168,7 @@ void MainWindow::createActions()
     pt_skinAct = new QAction(tr("&Only skin"), this);
     pt_skinAct->setStatusTip(tr("Enroll pixels wih color close to skin only"));
     pt_skinAct->setCheckable(true);
-    pt_skinAct->setChecked(true);
+    pt_skinAct->setChecked(false);
 
     pt_adjustAct = new QAction(tr("&Timing"), this);
     pt_adjustAct->setStatusTip(tr("Allows to adjust time between frequency evaluations & data normalization interval"));
@@ -306,12 +306,12 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
 bool MainWindow::openvideofile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open video file"), "/video", tr("Video (*.avi *.mp4 *.wmv)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open video file"), "/video", tr("Video (*.avi *.mp4 *.wmv *.mpeg1)"));
     while( !pt_videoCapture->openfile(fileName) ) {
         QMessageBox msgBox(QMessageBox::Information, this->windowTitle(), tr("Can not open video file!"), QMessageBox::Open | QMessageBox::Cancel, this, Qt::Dialog);
         if( msgBox.exec() == QMessageBox::Open )
         {
-            fileName = QFileDialog::getOpenFileName(this, tr("Open video file"), "/video", tr("Video (*.avi *.mp4 *.wmv)"));
+            fileName = QFileDialog::getOpenFileName(this, tr("Open video file"), "/video", tr("Video (*.avi *.mp4 *.wmv *.mpeg1)"));
         } else {
             return false;
         }

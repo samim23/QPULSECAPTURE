@@ -10,9 +10,9 @@ QT +=   core \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET =    Videoplethysmogaphy
+TARGET =    Babyplethysmogaphy
 TEMPLATE =  app
-VERSION =   3.0.0.4
+VERSION =   3.1.0.2
 
 
 DEFINES +=  APP_NAME=\\\"$${TARGET}\\\" \
