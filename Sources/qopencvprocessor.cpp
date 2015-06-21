@@ -256,7 +256,7 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     m_timeCounter = cv::getTickCount();
     if((faces_vector.size() != 0) && (area > 0))
     {
-        cv::rectangle( output, faces_vector[0] , cv::Scalar(255,25,25));
+        //cv::rectangle( output, faces_vector[0] , cv::Scalar(255,25,25));
         emit dataCollected( red , green, blue, area, m_framePeriod);
     }
     else
