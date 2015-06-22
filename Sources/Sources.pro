@@ -10,7 +10,7 @@ QT +=   core \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET =    Babyplethysmogaphy
+TARGET =    BabyVPG
 TEMPLATE =  app
 VERSION =   3.1.0.2
 
