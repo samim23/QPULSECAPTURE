@@ -78,7 +78,6 @@ private:
     int v_Y[FACE_RECT_VECTOR_LENGTH];
     int v_W[FACE_RECT_VECTOR_LENGTH];
     int v_H[FACE_RECT_VECTOR_LENGTH];
-    quint16 loop(qint16 value);
     cv::Rect enrollFaceRect(const cv::Rect &rect);
     cv::Rect getAverageFaceRect() const;
 
@@ -136,12 +135,5 @@ inline bool QOpencvProcessor::isInEllips(unsigned int X, unsigned int Y)
         return false;
     }
 }
-
-inline quint16 QOpencvProcessor::loop(qint16 value)
-{
-    return  (FACE_RECT_VECTOR_LENGTH + (value % FACE_RECT_VECTOR_LENGTH)) % FACE_RECT_VECTOR_LENGTH;
-}
-
-
 //------------------------------------------------------------------------------------------------------
 #endif // QOPENCVPROCESSOR_H

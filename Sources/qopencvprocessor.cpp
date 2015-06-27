@@ -110,44 +110,40 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     cv::equalizeHist(gray, gray);
     std::vector<cv::Rect> faces_vector;
     m_classifier.detectMultiScale(gray, faces_vector, 1.1, 11, cv::CASCADE_DO_ROUGH_SEARCH|cv::CASCADE_FIND_BIGGEST_OBJECT, cv::Size(OBJECT_MINSIZE, OBJECT_MINSIZE)); // Detect faces (list of flags CASCADE_DO_CANNY_PRUNING, CASCADE_DO_ROUGH_SEARCH, CASCADE_FIND_BIGGEST_OBJECT, CASCADE_SCALE_IMAGE )
-    if((faces_vector.size() == 0) && f_previousFWNF) {
-        m_framesWNF++;
+    cv::Rect face(0,0,0,0);
+    if(faces_vector.size() == 0) {
+        if(f_previousFWNF) {
+            m_framesWNF++;
+        }
+        f_previousFWNF = true;
+        if(m_framesWNF < FRAMES_WITHOUT_FACES_TRESHOLD) {
+            face = getAverageFaceRect();
+        }
     } else {
+        f_previousFWNF = false;
         m_framesWNF = 0;
+        face = enrollFaceRect(faces_vector[0]);
     }
-    unsigned int X = 0; // the top-left corner horizontal coordinate of future rectangle
-    unsigned int Y = 0; // the top-left corner vertical coordinate of future rectangle
-    unsigned int rectwidth = 0; //...
-    unsigned int rectheight = 0; //...
+    unsigned int X = face.x; // the top-left corner horizontal coordinate of future rectangle
+    unsigned int Y = face.y; // the top-left corner vertical coordinate of future rectangle
+    unsigned int rectwidth = face.width; //...
+    unsigned int rectheight = face.height; //...
+    unsigned int dX = rectwidth/16;
+    unsigned int dY = rectheight/30;
     unsigned long red = 0; // an accumulator for red color channel
     unsigned long green = 0; // an accumulator for green color channel
     unsigned long blue = 0; // an accumulator for blue color channel
-    unsigned int dX = 0;
-    unsigned int dY = 0;
     unsigned long area = 0;
-    cv::Rect face(0,0,0,0);
 
-    if(faces_vector.size() != 0) // if classifier find something, then do...
+    if(face.area() > 0)
     {
-        face = enrollFaceRect(faces_vector[0]);
-    } else if (m_framesWNF < FRAMES_WITHOUT_FACES_TRESHOLD)
-    {
-        face = getAverageFaceRect();
-    }
         cv::Mat blurRegion(output, face);
         cv::blur(blurRegion, blurRegion, cv::Size(m_blurSize, m_blurSize));
-        X = face.x; // take actual coordinate
-        Y = face.y; // take actual coordinate
-        rectwidth = face.width; // take actual size
-        rectheight = face.height; // take actual size
-        dX = (int)rectwidth/16; // the horizontal portion of rect domain that will be enrolled
-        dY = (int)rectheight/30; //...
         unsigned char *p; // this pointer will be used to store adresses of the image rows
         unsigned char tempBlue;
         unsigned char tempRed;
         unsigned char tempGreen;
         m_ellipsRect = cv::Rect(X + dX , Y-6*dY, rectwidth - 2*dX , rectheight+6*dY);
-
         if(output.channels() == 3)
         {
             if(m_skinFlag)
@@ -174,6 +170,7 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
                 }
             }
         }
+    }
 
 
     //-----end of if(faces_vector.size() != 0)-----
@@ -195,11 +192,6 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
         {
             emit selectRegion( QT_TRANSLATE_NOOP("QImageWidget", "Come closer or change light") );
         }
-    }
-    if(faces_vector.size() == 0) {
-        f_previousFWNF = true;
-    } else {
-        f_previousFWNF = false;
     }
     emit frameProcessed(output, m_framePeriod, area);
 }
