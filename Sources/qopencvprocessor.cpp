@@ -17,12 +17,23 @@ QOpencvProcessor::QOpencvProcessor(QObject *parent):
     m_cvRect.width = 0;
     m_cvRect.height = 0;
     m_framePeriod = 0.0;
-    m_fullFaceFlag = true;
     m_skinFlag = true;   
     v_pixelSet = NULL;
     m_seekCalibColors = false;
     m_calibFlag = false;
     m_blurSize = 4;
+    //--------------------
+    m_position = 0;
+    for(quint16 i = 0; i < FACE_RECT_VECTOR_LENGTH; i++)
+    {
+        v_X[i] = 0;
+        v_Y[i] = 0;
+        v_H[i] = 0;
+        v_Y[i] = 0;
+    }
+    //--------------------
+    m_framesWNF = 0;
+    f_previousFWNF = false;
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -99,6 +110,11 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     cv::equalizeHist(gray, gray);
     std::vector<cv::Rect> faces_vector;
     m_classifier.detectMultiScale(gray, faces_vector, 1.1, 11, cv::CASCADE_DO_ROUGH_SEARCH|cv::CASCADE_FIND_BIGGEST_OBJECT, cv::Size(OBJECT_MINSIZE, OBJECT_MINSIZE)); // Detect faces (list of flags CASCADE_DO_CANNY_PRUNING, CASCADE_DO_ROUGH_SEARCH, CASCADE_FIND_BIGGEST_OBJECT, CASCADE_SCALE_IMAGE )
+    if((faces_vector.size() == 0) && f_previousFWNF) {
+        m_framesWNF++;
+    } else {
+        m_framesWNF = 0;
+    }
     unsigned int X = 0; // the top-left corner horizontal coordinate of future rectangle
     unsigned int Y = 0; // the top-left corner vertical coordinate of future rectangle
     unsigned int rectwidth = 0; //...
@@ -109,154 +125,64 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     unsigned int dX = 0;
     unsigned int dY = 0;
     unsigned long area = 0;
+    cv::Rect face(0,0,0,0);
 
     if(faces_vector.size() != 0) // if classifier find something, then do...
     {
-        cv::Mat blurRegion(output, faces_vector[0]);
+        face = enrollFaceRect(faces_vector[0]);
+    } else if (m_framesWNF < FRAMES_WITHOUT_FACES_TRESHOLD)
+    {
+        face = getAverageFaceRect();
+    }
+        cv::Mat blurRegion(output, face);
         cv::blur(blurRegion, blurRegion, cv::Size(m_blurSize, m_blurSize));
-
-        X = faces_vector[0].x; // take actual coordinate
-        Y = faces_vector[0].y; // take actual coordinate
-        rectwidth = faces_vector[0].width; // take actual size
-        rectheight = faces_vector[0].height; // take actual size
-        dX = (int)rectwidth/4; // the horizontal portion of rect domain that will be enrolled
-        dY = (int)rectheight/13; //...
+        X = face.x; // take actual coordinate
+        Y = face.y; // take actual coordinate
+        rectwidth = face.width; // take actual size
+        rectheight = face.height; // take actual size
+        dX = (int)rectwidth/16; // the horizontal portion of rect domain that will be enrolled
+        dY = (int)rectheight/30; //...
         unsigned char *p; // this pointer will be used to store adresses of the image rows
         unsigned char tempBlue;
         unsigned char tempRed;
         unsigned char tempGreen;
+        m_ellipsRect = cv::Rect(X + dX , Y-6*dY, rectwidth - 2*dX , rectheight+6*dY);
 
-        if(m_fullFaceFlag == false)
+        if(output.channels() == 3)
         {
-            if(output.channels() == 3)
+            if(m_skinFlag)
             {
-                for(unsigned int j = (Y + dY); j < (Y + 3*dY); j++)
+                for(unsigned int j = Y - 2*dY; j < Y + rectheight; j++) // it is lucky that unsigned int saves from out of image memory cells processing from image top bound, but not from bottom where you should check this issue explicitly
                 {
                     p = output.ptr(j); //takes pointer to beginning of data on row
-                    for(unsigned int i = X + dX; i < X + rectwidth - dX; i++)
+                    for(unsigned int i = X; i < X + rectwidth; i++)
                     {
-                        blue += p[3*i];
-                        green += p[3*i+1];
-                        red += p[3*i+2];
-                        //Uncomment if want to see the enrolled domain on image
-                        //p[3*i] = 0;
-                        //p[3*i+1] %= LEVEL_SHIFT;
-                        p[3*i+2] %= LEVEL_SHIFT;
-                    }
-                }
-                for(unsigned int j = (Y + 6*dY); j < (Y + 9*dY); j++)
-                {
-                    p = output.ptr(j);//pointer to beginning of data on rows
-                    for(unsigned int i = (X + dX); i < (X + rectwidth - dX); i++)
-                    {
-                        blue += p[3*i];
-                        green += p[3*i+1];
-                        red += p[3*i+2];
-                        //Uncomment if want to see the enrolled domain on image
-                        //p[3*i] = 0;
-                        //p[3*i+1] = LEVEL_SHIFT;
-                        p[3*i+2] %= LEVEL_SHIFT;
-                    }
-                }
-            }
-            else
-            {
-                for(unsigned int j = (Y + dY); j < (Y + 3*dY); j++)
-                {
-                    p = output.ptr(j);//pointer to beginning of data on rows
-                    for(unsigned int i = (X + dX); i < (X + rectwidth - dX); i++)
-                    {
-                        green += p[i];
-                        //Uncomment if want to see the enrolled domain on image
-                        //p[i] = 0;
-                    }
-                }
-                for(unsigned int j = (Y + 6*dY); j < (Y + 9*dY); j++)
-                {
-                    p = output.ptr<unsigned char>(j);//pointer to beginning of data on rows
-                    for(unsigned int i = (X + dX); i < (X + rectwidth - dX); i++)
-                    {
-                        green += p[i];
-                        //Uncomment if want to see the enrolled domain on image
-                        //p[i] = 0;
-                    }
-                }
-                blue = green;
-                red = green;
-            }
-            area = (rectwidth - 2*dX)*(3*dY);
-        }
-        else
-        {
-            if(output.channels() == 3)
-            {
-                if(m_skinFlag)
-                {
-                    for(unsigned int j = Y - dY; j < Y + rectheight; j++) // it is lucky that unsigned int saves from out of image memory cells processing from image top bound, but not from bottom where you should check this issue explicitly
-                    {                       
-                        p = output.ptr(j); //takes pointer to beginning of data on row
-                        for(unsigned int i = X; i < X + rectwidth; i++)
+                        tempBlue = p[3*i];
+                        tempGreen = p[3*i+1];
+                        tempRed = p[3*i+2];
+                        if( isSkinColor(tempRed, tempGreen, tempBlue) && isInEllips(i,j))
                         {
-                            tempBlue = p[3*i];
-                            tempGreen = p[3*i+1];
-                            tempRed = p[3*i+2];
-                            if( isSkinColor(tempRed, tempGreen, tempBlue)) {
-                                area++;
-                                blue += tempBlue;
-                                green += tempGreen;
-                                red += tempRed;
-                                //p[3*i] = 255;
-                                //p[3*i+1] %= LEVEL_SHIFT;
-                                p[3*i+2] %= LEVEL_SHIFT;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    for(unsigned int j = Y; j < Y + rectheight; j++)
-                    {
-                        p = output.ptr(j); //takes pointer to beginning of data on row
-                        for(unsigned int i = X; i < X + rectwidth; i++)
-                        {
-                            blue += p[3*i];
-                            green += p[3*i+1];
-                            red += p[3*i+2];
-                            //Uncomment if want to see the enrolled domain on image
-                            //p[3*i] = 0;
+                            area++;
+                            blue += tempBlue;
+                            green += tempGreen;
+                            red += tempRed;
+                            //p[3*i] = 255;
                             //p[3*i+1] %= LEVEL_SHIFT;
                             p[3*i+2] %= LEVEL_SHIFT;
                         }
                     }
-                    area = rectwidth*rectheight;
                 }
             }
-            else
-            {
-                for(unsigned int j = Y; j < Y + rectheight; j++)
-                {
-                    p = output.ptr(j);//pointer to beginning of data on rows
-                    for(unsigned int i = X; i < X + rectwidth; i++)
-                    {
-                        green += p[i];
-                        //Uncomment if want to see the enrolled domain on image
-                        //p[i] = 0;
-                    }
-                }
-                blue = green;
-                red = green;
-                area = rectwidth*rectheight;
-            }           
         }
-    }
 
 
     //-----end of if(faces_vector.size() != 0)-----
     m_framePeriod = ((double)cv::getTickCount() -  m_timeCounter)*1000.0 / cv::getTickFrequency();
     m_timeCounter = cv::getTickCount();
-    if((faces_vector.size() != 0) && (area > 0))
+
+    if(area > 0)
     {
-        //cv::rectangle( output, faces_vector[0] , cv::Scalar(255,25,25));
+        cv::rectangle( output, face , cv::Scalar(255,25,25));
         emit dataCollected( red , green, blue, area, m_framePeriod);
     }
     else
@@ -269,6 +195,11 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
         {
             emit selectRegion( QT_TRANSLATE_NOOP("QImageWidget", "Come closer or change light") );
         }
+    }
+    if(faces_vector.size() == 0) {
+        f_previousFWNF = true;
+    } else {
+        f_previousFWNF = false;
     }
     emit frameProcessed(output, m_framePeriod, area);
 }
@@ -423,14 +354,6 @@ void QOpencvProcessor::rectProcess(const cv::Mat &input)
 
 //-----------------------------------------------------------------------------------------------
 
-void QOpencvProcessor::setFullFaceFlag(bool value)
-{
-    m_fullFaceFlag = value;
-}
-
-//------------------------------------------------------------------------------------------------
-
-
 void QOpencvProcessor::mapProcess(const cv::Mat &input)
 {
     cv::Mat output(input);
@@ -539,4 +462,34 @@ void QOpencvProcessor::setBlurSize(int size)
     {
         m_blurSize = size;
     }
+}
+
+cv::Rect QOpencvProcessor::enrollFaceRect(const cv::Rect &rect)
+{
+    v_X[m_position] = rect.x;
+    v_Y[m_position] = rect.y;
+    v_H[m_position] = rect.height;
+    v_W[m_position] = rect.width;
+    m_position = (++m_position) % FACE_RECT_VECTOR_LENGTH;
+    return getAverageFaceRect();
+}
+
+cv::Rect QOpencvProcessor::getAverageFaceRect() const
+{
+    qreal x = 0.0;
+    qreal y = 0.0;
+    qreal w = 0.0;
+    qreal h = 0.0;
+    for(quint16 i = 0; i < FACE_RECT_VECTOR_LENGTH; i++)
+    {
+        x += v_X[i];
+        y += v_Y[i];
+        w += v_W[i];
+        h += v_H[i];
+    }
+    x /= FACE_RECT_VECTOR_LENGTH;
+    y /= FACE_RECT_VECTOR_LENGTH;
+    w /= FACE_RECT_VECTOR_LENGTH;
+    h /= FACE_RECT_VECTOR_LENGTH;
+    return cv::Rect(x,y,w,h);
 }
