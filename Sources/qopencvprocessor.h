@@ -13,7 +13,7 @@ The simplest way to use it - rewrite appropriate section in QOpencvProcessor::cu
 
 #define CALIBRATION_VECTOR_LENGTH 25
 #define FACE_RECT_VECTOR_LENGTH 9
-#define FRAMES_WITHOUT_FACES_TRESHOLD 5
+#define FRAMES_WITHOUT_FACES_TRESHOLD 9
 
 //------------------------------------------------------------------------------------------------------
 
@@ -82,8 +82,6 @@ private:
     cv::Rect getAverageFaceRect() const;
 
     quint8 m_framesWNF; // frames with no faces in a row
-    bool f_previousFWNF;
-
 };
 
 inline bool QOpencvProcessor::isSkinColor(unsigned char valueRed, unsigned char valueGreen, unsigned char valueBlue)

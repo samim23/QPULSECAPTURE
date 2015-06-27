@@ -33,7 +33,6 @@ QOpencvProcessor::QOpencvProcessor(QObject *parent):
     }
     //--------------------
     m_framesWNF = 0;
-    f_previousFWNF = false;
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -112,15 +111,11 @@ void QOpencvProcessor::faceProcess(const cv::Mat &input)
     m_classifier.detectMultiScale(gray, faces_vector, 1.1, 11, cv::CASCADE_DO_ROUGH_SEARCH|cv::CASCADE_FIND_BIGGEST_OBJECT, cv::Size(OBJECT_MINSIZE, OBJECT_MINSIZE)); // Detect faces (list of flags CASCADE_DO_CANNY_PRUNING, CASCADE_DO_ROUGH_SEARCH, CASCADE_FIND_BIGGEST_OBJECT, CASCADE_SCALE_IMAGE )
     cv::Rect face(0,0,0,0);
     if(faces_vector.size() == 0) {
-        if(f_previousFWNF) {
-            m_framesWNF++;
-        }
-        f_previousFWNF = true;
+        m_framesWNF++;
         if(m_framesWNF < FRAMES_WITHOUT_FACES_TRESHOLD) {
             face = getAverageFaceRect();
         }
     } else {
-        f_previousFWNF = false;
         m_framesWNF = 0;
         face = enrollFaceRect(faces_vector[0]);
     }
