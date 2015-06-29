@@ -28,8 +28,8 @@ QOpencvProcessor::QOpencvProcessor(QObject *parent):
     {
         v_X[i] = 0;
         v_Y[i] = 0;
+        v_W[i] = 0;
         v_H[i] = 0;
-        v_Y[i] = 0;
     }
     //--------------------
     m_framesWNF = 0;
@@ -454,9 +454,9 @@ void QOpencvProcessor::setBlurSize(int size)
 cv::Rect QOpencvProcessor::enrollFaceRect(const cv::Rect &rect)
 {
     v_X[m_position] = rect.x;
-    v_Y[m_position] = rect.y;
-    v_H[m_position] = rect.height;
+    v_Y[m_position] = rect.y;   
     v_W[m_position] = rect.width;
+    v_H[m_position] = rect.height;
     m_position = (++m_position) % FACE_RECT_VECTOR_LENGTH;
     return getAverageFaceRect();
 }
