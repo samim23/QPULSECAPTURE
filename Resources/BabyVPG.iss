@@ -3,7 +3,7 @@
 
 #define MyAppName "BabyVPG"
 #define MyAppVersion "3.1.0.2"
-#define MyAppURL "https://github.com/pi-null-mezon/QPULSECAPTURE.git"
+#define MyAppURL "https://sourceforge.net/projects/babyvpg/"
 #define MyAppExeName "BabyVPG.exe"
 
 #define QtLibs "C:\Qt\5.4\msvc2010_opengl\bin"
