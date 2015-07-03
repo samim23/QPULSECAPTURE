@@ -425,7 +425,7 @@ void QHarmonicProcessor::computeHeartRate()
 
     if(m_HeartSNR > SNR_TRESHOLD)
     {
-        m_HeartRate = (power_multiplyed_by_index / signal_power) * 60000.0 / buffer_duration;
+        m_HeartRate = (m_HeartRate + (power_multiplyed_by_index / signal_power) * 60000.0 / buffer_duration) / 2.0;
         if((m_HeartRate <= m_rightTreshold) && (m_HeartRate >= m_leftThreshold))
             emit heartRateUpdated(m_HeartRate, m_HeartSNR, true);
         else

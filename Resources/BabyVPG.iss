@@ -13,7 +13,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{07B2F71B-E751-4CE6-9547-3200CFCD26D4}
+AppId={{1804F988-AB2F-4653-AAE2-BECE105161FA}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -26,7 +26,7 @@ LicenseFile=C:\Programing\QPULSECAPTURE\LICENSE
 InfoBeforeFile=C:\Programing\QPULSECAPTURE\README.md
 InfoAfterFile=C:\Programing\QPULSECAPTURE\Resources\Docs\Show after installation.txt
 OutputDir=C:\Programing\QPULSECAPTURE\Install
-OutputBaseFilename={#MyAppName}_v{#MyAppVersion}_setup
+OutputBaseFilename= SETUP_{#MyAppName}_v{#MyAppVersion}
 SetupIconFile=C:\Programing\QPULSECAPTURE\Resources\Docs\Setup.ico
 Compression=lzma
 SolidCompression=yes
@@ -67,16 +67,15 @@ Source: "{#OpencvLibs}\opencv_ffmpeg248.dll"; DestDir: "{app}"; Flags: ignorever
 Source: "{#OpencvLibs}\opencv_highgui248.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#OpencvLibs}\opencv_imgproc248.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#OpencvLibs}\opencv_objdetect248.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#OpencvLibs}\..\..\..\..\sources\data\haarcascades\haarcascade_frontalface_alt.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
-Source: "{#OpencvLibs}\..\..\..\..\sources\data\haarcascades\haarcascade_frontalface_default.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
-Source: "{#OpencvLibs}\..\..\..\..\sources\data\lbpcascades\lbpcascade_frontalface.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
+;Source: "{#OpencvLibs}\..\..\..\..\sources\data\haarcascades\haarcascade_frontalface_alt.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
+;Source: "{#OpencvLibs}\..\..\..\..\sources\data\haarcascades\haarcascade_frontalface_default.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
+;Source: "{#OpencvLibs}\..\..\..\..\sources\data\lbpcascades\lbpcascade_frontalface.xml"; DestDir: "{app}\haarcascades"; Flags: ignoreversion
 ;Source: "C:\programing\qpulsecapture\resources\docs\Manual (RUS, v1.0.0.6).pdf"; DestDir: "{app}\Docs"; Flags: ignoreversion
 Source: "C:\Programing\QPULSECAPTURE\Resources\Docs\Translation_Rus.qm"; DestDir: "{app}"; Flags: ignoreversion; Languages: "Russian"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-;Name: "{group}\Manual"; Filename: "{app}\Docs\Manual (RUS, v1.0.0.6).pdf"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon

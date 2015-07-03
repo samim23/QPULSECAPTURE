@@ -396,7 +396,7 @@
     <message>
         <location filename="../../Sources/mainwindow.cpp" line="309"/>
         <location filename="../../Sources/mainwindow.cpp" line="314"/>
-        <source>Video (*.avi *.mp4 *.wmv)</source>
+        <source>Video (*.avi *.mp4 *.wmv *.mpeg1)</source>
         <translation></translation>
     </message>
     <message>
@@ -450,115 +450,115 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="615"/>
+        <location filename="../../Sources/mainwindow.cpp" line="616"/>
         <source>Plot options available through Menu-&gt;Options-&gt;New plot</source>
         <translation>Опции визуализации доступны в меню Опции-&gt;Новое окно</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="621"/>
+        <location filename="../../Sources/mainwindow.cpp" line="622"/>
         <source>You can prolong Paused session by means of Resume option in context menu</source>
         <translation>Вы можете продолжить остановленную сессию выбором пункта Продолжить из контекстного меню</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="634"/>
+        <location filename="../../Sources/mainwindow.cpp" line="635"/>
         <source>Select appropriate plot type:</source>
         <translation>Выберите желаемый вид графика:</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="638"/>
+        <location filename="../../Sources/mainwindow.cpp" line="639"/>
         <source>Accept</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="639"/>
+        <location filename="../../Sources/mainwindow.cpp" line="640"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="655"/>
+        <location filename="../../Sources/mainwindow.cpp" line="656"/>
         <source>Plot select dialog</source>
         <translation>Тип окна</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="674"/>
-        <location filename="../../Sources/mainwindow.cpp" line="688"/>
-        <location filename="../../Sources/mainwindow.cpp" line="696"/>
-        <location filename="../../Sources/mainwindow.cpp" line="702"/>
-        <location filename="../../Sources/mainwindow.cpp" line="718"/>
+        <location filename="../../Sources/mainwindow.cpp" line="675"/>
+        <location filename="../../Sources/mainwindow.cpp" line="689"/>
+        <location filename="../../Sources/mainwindow.cpp" line="697"/>
+        <location filename="../../Sources/mainwindow.cpp" line="703"/>
+        <location filename="../../Sources/mainwindow.cpp" line="719"/>
         <source>Frame</source>
         <translation>Кадр</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="674"/>
+        <location filename="../../Sources/mainwindow.cpp" line="675"/>
         <source>Centered &amp; normalized signal</source>
         <translation>Центрированный и нормализованный сигнал светоотражения</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="680"/>
-        <location filename="../../Sources/mainwindow.cpp" line="726"/>
+        <location filename="../../Sources/mainwindow.cpp" line="681"/>
+        <location filename="../../Sources/mainwindow.cpp" line="727"/>
         <source>Freq.count</source>
         <translation>Частотный отсчёт</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="680"/>
-        <location filename="../../Sources/mainwindow.cpp" line="726"/>
+        <location filename="../../Sources/mainwindow.cpp" line="681"/>
+        <location filename="../../Sources/mainwindow.cpp" line="727"/>
         <source>DFT amplitude spectrum</source>
         <translation>Амплитудно-частотный спектр ДПФ сигнала светоотражения</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="688"/>
+        <location filename="../../Sources/mainwindow.cpp" line="689"/>
         <source>processing period per frame, ms</source>
         <translation>Время обработки кадра, мс</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="696"/>
+        <location filename="../../Sources/mainwindow.cpp" line="697"/>
         <source>Normalised &amp; centered projection on 1-st PCA direction</source>
         <translation>Проекция на первое направление ГК</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="702"/>
+        <location filename="../../Sources/mainwindow.cpp" line="703"/>
         <source>Digital derivative after smoothing</source>
         <translation>Отклик детектора</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="710"/>
-        <location filename="../../Sources/mainwindow.cpp" line="718"/>
+        <location filename="../../Sources/mainwindow.cpp" line="711"/>
+        <location filename="../../Sources/mainwindow.cpp" line="719"/>
         <source>Signal count</source>
         <translation>Отсчёт центрированного и нормированного сигнала светоотражения</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="734"/>
+        <location filename="../../Sources/mainwindow.cpp" line="735"/>
         <source>Axis font</source>
         <translation>Шрифт системы координат</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="736"/>
+        <location filename="../../Sources/mainwindow.cpp" line="737"/>
         <source>Trace color</source>
         <translation>Цвет линии</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="738"/>
+        <location filename="../../Sources/mainwindow.cpp" line="739"/>
         <source>BG color</source>
         <translation>Цвет фона</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="740"/>
+        <location filename="../../Sources/mainwindow.cpp" line="741"/>
         <source>CS color</source>
         <translation>Цвет системы координат</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="752"/>
+        <location filename="../../Sources/mainwindow.cpp" line="753"/>
         <source>You came up to a limit of dialogs ailable</source>
         <translation>Вы уже достигли предельного количества доступных окон визуализации</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="802"/>
-        <location filename="../../Sources/mainwindow.cpp" line="939"/>
+        <location filename="../../Sources/mainwindow.cpp" line="803"/>
+        <location filename="../../Sources/mainwindow.cpp" line="940"/>
         <source>Another record?</source>
         <translation>Начать новую запись?</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="946"/>
+        <location filename="../../Sources/mainwindow.cpp" line="947"/>
         <source>Save measurements into a file</source>
         <translation>Сохранить измерения в файл</translation>
     </message>
@@ -571,41 +571,41 @@
         <translation type="vanished">Не удаётся сохранить фал, попробуте другое наименование</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="809"/>
-        <location filename="../../Sources/mainwindow.cpp" line="814"/>
-        <location filename="../../Sources/mainwindow.cpp" line="951"/>
+        <location filename="../../Sources/mainwindow.cpp" line="810"/>
+        <location filename="../../Sources/mainwindow.cpp" line="815"/>
+        <location filename="../../Sources/mainwindow.cpp" line="952"/>
         <source>Save record to a file</source>
         <translation>Сохранить запись в файл</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="812"/>
-        <location filename="../../Sources/mainwindow.cpp" line="949"/>
+        <location filename="../../Sources/mainwindow.cpp" line="813"/>
+        <location filename="../../Sources/mainwindow.cpp" line="950"/>
         <source>Can not save file, try another name</source>
         <translation>Не получается сохранить файл, попробуйте другое имя</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="814"/>
-        <location filename="../../Sources/mainwindow.cpp" line="951"/>
+        <location filename="../../Sources/mainwindow.cpp" line="815"/>
+        <location filename="../../Sources/mainwindow.cpp" line="952"/>
         <source>Text file (*.txt)</source>
         <translation>Текстовый файл (*.txt)</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="839"/>
+        <location filename="../../Sources/mainwindow.cpp" line="840"/>
         <source>Select region on image first</source>
         <translation>Сначала выберите область изображения</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="846"/>
+        <location filename="../../Sources/mainwindow.cpp" line="847"/>
         <source>Another map?</source>
         <translation>Новая карта?</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="924"/>
+        <location filename="../../Sources/mainwindow.cpp" line="925"/>
         <source>Warning</source>
         <translation>Внимание</translation>
     </message>
     <message>
-        <location filename="../../Sources/mainwindow.cpp" line="924"/>
+        <location filename="../../Sources/mainwindow.cpp" line="925"/>
         <source>Start new session before!</source>
         <translation>Начните новую сессию измерений!</translation>
     </message>
@@ -619,9 +619,7 @@
     </message>
     <message>
         <location filename="../../Sources/qimagewidget.cpp" line="187"/>
-        <location filename="../../Sources/qimagewidget.cpp" line="206"/>
         <location filename="../../Sources/qimagewidget.cpp" line="261"/>
-        <location filename="../../Sources/qimagewidget.cpp" line="281"/>
         <source>Unreliable</source>
         <translation>Действует помеха</translation>
     </message>
@@ -632,10 +630,8 @@
         <translation>ударов в минуту</translation>
     </message>
     <message>
-        <location filename="../../Sources/qimagewidget.cpp" line="210"/>
-        <location filename="../../Sources/qimagewidget.cpp" line="285"/>
         <source>rpm</source>
-        <translation>вдохов в минуту</translation>
+        <translation type="vanished">вдохов в минуту</translation>
     </message>
     <message>
         <location filename="../../Sources/qimagewidget.cpp" line="318"/>
@@ -742,7 +738,7 @@
     </message>
     <message>
         <location filename="../../Sources/qsettingsdialog.ui" line="106"/>
-        <location filename="../../Sources/qsettingsdialog.ui" line="442"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="445"/>
         <source>...</source>
         <translation></translation>
     </message>
@@ -767,138 +763,138 @@
         <translation>Обработать файл видеозаписи</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="227"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="230"/>
         <source>Advanced</source>
         <translation>Продвинутые</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="239"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="242"/>
         <source>Length of data</source>
         <translation>Объём выборки измерений</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="288"/>
-        <location filename="../../Sources/qsettingsdialog.ui" line="357"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="291"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="360"/>
         <source>256</source>
         <translation>256</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="308"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="311"/>
         <source>Length of buffer</source>
         <translation>Объём подвыборки</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="380"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="383"/>
         <source>if unchecked, frequency will be evaluated from digital filter output</source>
         <translation>Если отключено, частота будет расчитываться детектором пересечения нуля</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="383"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="386"/>
         <source>Use harmonic analysis for frequency estimation</source>
         <translation>Расчёт частоты по амплитуде гармоник</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="405"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="408"/>
         <source>Patient</source>
         <translation>Объект</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="417"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="420"/>
         <source>Population data</source>
         <translation>Популяционные данные</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="429"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="432"/>
         <source>normal_heart_rate_at_rest.xml</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="459"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="462"/>
         <source>From 25 % to 75 %</source>
         <translation>От 25 % до 75 %</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="464"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="467"/>
         <source>From 10 % to 90%</source>
         <translation>От 10 % до 90 %</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="469"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="472"/>
         <source>From 5 % to 95 %</source>
         <translation>От 5 % до 95 %</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="474"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="477"/>
         <source>From 2,5 % to 97,5 %</source>
         <translation>От 2,5 % до 97,5 %</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="479"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="482"/>
         <source>From 1,0 % to 99,0 %</source>
         <translation>От 1,0 % до 99,0 %</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="493"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="496"/>
         <source>Path to file with distribution</source>
         <translation>Путь к файлу с распределением нормы</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="506"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="509"/>
         <source>Select interval:</source>
         <translation>Дов. интервал:</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="552"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="555"/>
         <source>Use population data</source>
         <translation>Учитывать данные о популяционной норме</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="581"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="584"/>
         <source>Select birth date:</source>
         <translation>Дата рождения:</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="594"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="597"/>
         <source>Male</source>
         <translation>Муж</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="610"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="613"/>
         <source>Female</source>
         <translation>Жен</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="623"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="626"/>
         <source>Select patient sex:</source>
         <translation>Пол:</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="638"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="641"/>
         <source>Choose to cancel processing</source>
         <translation>Отменить начало новой сессии</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="641"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="644"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="654"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="657"/>
         <source>Choose to start processing</source>
         <translation>Начать сессию</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="657"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="660"/>
         <source>Accept</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="670"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="673"/>
         <source>Choose to set default values</source>
         <translation>Установить значения по умолчанию</translation>
     </message>
     <message>
-        <location filename="../../Sources/qsettingsdialog.ui" line="673"/>
+        <location filename="../../Sources/qsettingsdialog.ui" line="676"/>
         <source>Set default</source>
         <translation>По умолчнию</translation>
     </message>

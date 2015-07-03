@@ -592,6 +592,7 @@ void MainWindow::configure_and_start_session()
         pt_RecordsMenu->setEnabled(true);
 
         pt_greenAct->trigger(); // because green channel is default in QHarmonicProcessor
+        pt_skinAct->trigger();
         pt_pruningAct->setChecked(false);
 
         if(m_settingsDialog.get_flagVideoFile())
